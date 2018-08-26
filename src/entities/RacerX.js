@@ -14,23 +14,41 @@ const maxTurnSpeed = Math.PI/2;
 const spriteRotation = Math.PI/2;
 
 class Racer extends Container {
-	constructor(startPosition) {
+	constructor(startPosition, startSpeed, heading) {
 		super();
+		//this maxSpeed = 200;
+		//const maxAcc = 20;
+		//const maxBrake = 30;
+		//const maxTurnSpeed = Math.PI/2; 
 		this.position = new Vector(startPosition.x, startPosition.y);
-		this.speed = 0;
+		this.speed = startSpeed;
 		this.theta = 0;
+		this.heading = new Vector(heading.x, heading.y).unit();
+		//steering goes from +- 45 degrees off center.
+		
 		this.controls = new KeyControls();
-		this.pivot = new Vector(-20, 0);
-		//auto is 40 x 70 pixels
-		const auto = new Sprite(new Texture("./res/Images/PNG/Cars/car_blue_small_1.png"));	
-		auto.rotation = spriteRotation;
-		auto.anchor = new Vector(35,-20);
-		this.add(auto);
-		const whisker = new Sprite(new Texture("./res/crosshairs/PNG/White/crosshair046.png"));
-		whisker.anchor = new Vector(-32, -32);
-		whisker.position = new Vector (100, 0);
-		this.add(whisker);
-	}
+		this.carSprite = new Sprite(new Texture("./res/Images/PNG/Cars/car_blue_small_1.png")); //car sprite points {0, -1} ... up.
+		this.carSprite.pivot.x = 20;
+		this.carSprite.pivot.y = 60;
+		this.carSprite.rotation = spriteRotation;
+		this.add(this.carSprite);
+		this.c2 = new Sprite(new Texture("./res/crosshairs/PNG/White/crosshair046.png")); //car sprite points {0, -1} ... up.
+		this.c2.pivot.x = 20;
+		this.c2.pivot.y = 60;
+		this.c2.position = new Vector(85,0);
+		this.c2.rotation = 0;
+		this.add(this.c2);
+		
+
+		this.whisker = new TileSprite(new Texture("./res/TileSheet/crosshairs_tilesheet_white2.png"),128, 128 );
+		this.whisker.frame = {x:0, y:4};
+		//this.whisker.position = this.position.plus(80, 20);
+		//this.add(this.whisker);
+		console.log(this);
+
+		//this.add(this.car);
+		//console.log(this.car);
+		}
 	update(dt, t) {
 		//if up arrow is pressed
 		if (this.controls.y == -1 ) {
@@ -51,7 +69,9 @@ class Racer extends Container {
 			this.theta -= maxTurnSpeed * dt;
 		}
 		this.theta = this.theta % (Math.PI * 2);
-		this.rotation = this.theta;
+		//this.carSprite.rotation = this.theta + spriteRotation;
+		this.carSprite.rotation = this.theta + spriteRotation;
+		this.heading = this.heading.plus(Math.cos(this.theta), Math.sin(this.theta)).unit();
 		this.position.x += this.speed * dt * Math.cos(this.theta);
 		this.position.y += this.speed * dt * Math.sin(this.theta);
 

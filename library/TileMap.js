@@ -16,7 +16,7 @@ class TileMap extends Container {
 			const s = new TileSprite(texture, tileW, tileH);
 			s.frame = frame;
 			s.position.x = i  % mapW * tileW;
-			s.position.y = Math.floor(i/mapH) * tileH;
+			s.position.y = Math.floor(i/mapW) * tileH;
 			return s;
 		});
 	}

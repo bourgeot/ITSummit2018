@@ -12,11 +12,12 @@ class Level extends TileMap {
 		const mapW = Math.floor(w / tileW);
 		const mapH = Math.floor(h / tileH);
 		// Describe the tiles in metadata
+		//walls are 20 px  wide.
 		const tileIndex = [
-			{fn: 1, id: "nwall", x: 0, y: 0},
-			{fn: 2, id: "swall", x: 9, y: 3},
-			{fn: 3, id: "ewall", x: 4, y: 11},
-			{fn: 4, id: "wwall", x: 4, y: 13},
+			{fn: 1, id: "nwall", x: 0, y: 0, boundary: {0,0,128,20}},
+			{fn: 2, id: "swall", x: 3, y: 9, boundary: {0,108,128,128}},
+			{fn: 3, id: "ewall", x: 4, y: 11, boundary: {108,0,128,128}},
+			{fn: 4, id: "wwall", x: 4, y: 13, boundary: {0,0,20,128}},
 			{fn: 5, id: "nwcurve90", x: 5, y: 13},
 			{fn: 6, id: "necurve90", x: 5, y: 12},
 			{fn: 7, id: "securve90", x: 4, y: 9},
@@ -26,7 +27,7 @@ class Level extends TileMap {
 			{fn: 11, id: "opentriangle", x: 0, y: 4},
 			{fn: 12, id: "openpit", x: 7, y: 1},
 			{fn: 13, id: "openchecker", x: 0, y: 6},
-			{fn: 14, id: "open", x: 12, y: 4},
+			{fn: 14, id: "open", x: 4, y: 12},
 			{fn: 15, id: "nnecurve30", x: 5, y: 9},
 			{fn: 16, id: "necurve30", x: 5, y: 8},
 			{fn: 17, id: "enecurve30", x: 4, y: 5},
@@ -52,16 +53,21 @@ class Level extends TileMap {
 		];
 		const fnMap = [
 			34,34,34,34,34,34,34,34,34,34,
-			34, 1, 1, 1, 1, 1,15,34,34,34,
-			34, 4,14,14,14,14,14,16,34,34,
-			34, 2, 2, 2, 2, 2,29,17,34,34
+			34, 5, 1, 1, 1, 1, 1,15,16,34,
+			34, 8, 2, 2, 2, 2, 2, 2,17,34,
+			34,34,34,34,34,34,34,34, 3,34,
+			34,34,34,34,34,34,34,34, 3,34,
+			34,34,34,34,34,34,34,34, 3,34,
+			34,34,34,34,34,34,34,34, 3,34,
+			34,34,34,34,34,34,34,34,18,34,
+			34,34,2 ,2 , 2, 2, 2,20,19,34,
+			34,34,34,34,34,34,34,34,34,34
 		];		
 		
 		const level = [];
 		var counter = 0;
-		console.log(mapH, mapW);
-		for (let y = 0; y < mapH; y++) {
-		  for (let x = 0; x < mapW; x++) {
+		for (let i = 0; i < mapH; i++) {
+		  for (let j = 0; j < mapW; j++) {
 
 			const found = tileIndex.find(function(e) {
 				return e.fn == fnMap[counter];
@@ -77,7 +83,6 @@ class Level extends TileMap {
 		  }
 	
 		}
-		
 		super(level, mapW, mapH, tileW, tileH, texture);
 		this.bounds = {
 			left: tileW,
