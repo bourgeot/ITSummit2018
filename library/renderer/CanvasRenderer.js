@@ -61,12 +61,24 @@ class CanvasRenderer {
 						ctx.drawImage(child.texture.img, 0, 0);
 					}
 				}
-				/*
+				
 				else if (child.style && child.w && child.h) {
 					ctx.fillStyle = child.style.fill;
 					ctx.fillRect(0, 0, child.w, child.h);
 				}
-				*/
+				else if (child.style && child.points) {
+					//path
+					ctx.beginPath();
+					ctx.moveTo(child.points[0][0], child.points[0][1]);
+					for (let i = 1; i < child.points.length; i++) {
+						ctx.lineTo(child.points[i][0], child.points[i][1]);	
+					}
+					//ctx.closePath();
+					ctx.stroke();
+					//ctx.fillStyle = child.style.fill;
+					//ctx.fill();
+				}
+				
 				//handle any children
 				if (child.children) {
 					renderRec(child);

@@ -1,0 +1,29 @@
+LineLineCollision
+Input
+	LineA1	Point	First point on line A
+	LineA2	Point	Second point on line A
+	LineB1	Point	First point on line B
+	LineB2	Point	Second point on line B
+Output
+	The point of the collision, or null if no collision exists.
+Method
+	denom = ((LineB2.Y – LineB1.Y) * (LineA2.X – LineA1.X)) –
+		((LineB2.X – LineB1.X) * (LineA2.Y - LineA1.Y))
+	if (denom == 0)
+		return null
+	else
+		ua = (((LineB2.X – LineB1.X) * (LineA1.Y – LineB1.Y)) –
+			((LineB2.Y – LineB1.Y) * (LineA1.X – LineB1.X))) / denom
+		/* The following 3 lines are only necessary if we are checking line
+			segments instead of infinite-length lines */
+		ub = (((LineA2.X – LineA1.X) * (LineA1.Y – LineB1.Y)) –
+			((LineA2.Y – LineA1.Y) * (LineA1.X – LineB1.X))) / denom
+		if (ua < 0) || (ua > 1) || (ub < 0) || (ub > 1)
+			return null
+
+		return LineA1 + ua * (LineA2 – LineA1)
+		
+			{fn: 1, id: "nwall", x: 0, y: 0, bType: "rect", boundary: [[0,0], [128,20]]},
+			{fn: 2, id: "swall", x: 3, y: 9, bType: "rect", boundary: [[0,108],[128,128]]},
+			{fn: 3, id: "ewall", x: 4, y: 11, bType: "rect", boundary: [[108,0], [128,128]]},
+			{fn: 4, id: "wwall", x: 4, y: 13, bType: "rect", boundary: [[0,0],[20,128]]},
