@@ -6,6 +6,7 @@ import KeyControls from "../../library/controls/KeyControls.js";
 import Vector from "../../library/utils/Vector.js"
 import math from "../../library/utils/math.js";
 import Rectangle from "../../library/Rectangle.js";
+import Whisker from "../../library/Whisker.js";
 
 const maxSpeed = 1000;
 const maxAcc = 300;
@@ -35,18 +36,26 @@ class Racer extends Container {
 		this.hitBox = new Rectangle(60,34);
 		this.hitBox.anchor = auto.anchor.plus(-65,2);
 		this.add(this.hitBox);
-		const whisker1 = new Sprite(new Texture("./res/crosshairs/PNG/White/crosshair006.png"));
-		const w1O = new Sprite(new Texture("./res/crosshairs/PNG/White/crosshair001.png"));
-		whisker1.anchor = new Vector(-32, -32);
-		w1O.anchor = new Vector(-32,-32);
-		whisker1.position = new Vector (100, 0);
-		w1O.position = new Vector (22, 0);
-		this.add(whisker1);
-		this.add(w1O);
-		//const whisker2 = new Sprite(new Texture("./res/crosshairs/PNG/White/crosshair046.png"));
-		//whisker2.anchor = new Vector(-32, -32);
-		//whisker2.position = new Vector (100* cos(Math.PI/8), 100 * sin(Math.PI/8));
-		//this.add(whisker2);
+		//const whisker1 = new Sprite(new Texture("./res/crosshairs/PNG/White/crosshair006.png"));
+		//const w1O = new Sprite(new Texture("./res/crosshairs/PNG/White/crosshair001.png"));
+		//whisker1.anchor = new Vector(-32, -32);
+		//w1O.anchor = new Vector(-32,-32);
+		//whisker1.position = new Vector (122, 0);
+		//w1O.position = new Vector (22, 0);
+		//this.add(whisker1);
+		//this.add(w1O);
+//			const w2 = new Whisker(
+//				[[12,-4], [100*Math.cos(Math.PI/8) + 12, -100*Math.sin(Math.PI/8) - 4]],
+		for (let k = -2; k < 3; k++) {
+			const origin = [12, k*3];
+			const w = new Whisker (
+				[origin, [100*Math.cos( Math.abs(k) * Math.PI/8) + origin[0], 100 * Math.sin( k * Math.PI/8) + origin[1]]],
+				new Sprite(new Texture("./res/crosshairs/PNG/White/crosshair001.png")),
+				new Sprite(new Texture("./res/crosshairs/PNG/White/crosshair006.png")));
+			this.add(w);
+		}
+		//console.log(this);
+		//console.log(w2, w2.lengthSquared());
 	}
 	update(dt, t) {
 		//if up arrow is pressed
