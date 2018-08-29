@@ -1,33 +1,40 @@
 import Path from "./Path.js";
 import Container from "./Container.js";
+import Vector from "./utils/Vector.js";
 
 const spriteSize = 64;
 class Whisker extends Container {
 	constructor(points, oSprite, eSprite) {
-		super(points);
-		this.points = points;
-		this.position = {x: points[0][0], y: points[0][1]};
-		this.oSprite = oSprite;
-		this.oSprite.anchor = {x: -32, y: -32};
-		this.oSprite.position = this.position;
-		this.eSprite = eSprite;
-		this.eSprite.anchor = {x: -32, y: -32};
-		this.eSprite.position = {x: points[1][0], y: points[1][1]};
+		super();
+		//const points = points;
+		//make the position the same as the end point
+		this.position = new Vector( points[0][0], points[0][1]);
+		this.origin = new Vector(points[1][0], points[1][1]);
+		const originSprite = oSprite;
+		originSprite.anchor = {x: -32, y: -32};
+		originSprite.position = this.position;
+		this.endSprite = eSprite;
+		this.endSprite.anchor = {x: -32, y: -32};
+		this.endSprite.position = this.origin;
 		this.path = new Path(points);
+		//this.path.position = this.origin;
 		this.add(this.path);
-		this.add(this.oSprite);
-		this.add(this.eSprite);
+		this.add(originSprite);
+		this.add(this.endSprite);
+		//console.log(this.lengthSquared());
+		
 	}
 	lengthSquared () {
-		return (this.points[1][0] - this.points[0][0]) * (this.points[1][0] - this.points[0][0]) +
-			(this.points[1][1] - this.points[0][1]) * (this.points[1][1] - this.points[0][1]);
+		return (this.position.x - this.origin.x) * (this.position.x - this.origin.x) +
+			(this.position.y - this.origin.y) * (this.position.y - this.origin.y);
 	}
-	updateTip(point) {
-		this.points[1][0] = point[0];
-		this.points[1][1] = point[1];
-		this.path.points[1][0] = point[0];
-		this.path.points[1][1] = point[1];
-		this.eSprite.position = {x: this.points[1][0], y: this.points[1][1]};
+	update(position) {
+		//console.log('here');
+		this.origin.x += position.x;
+		this.origin.y += position.y;
+		this.path.points[1][0] = position.x;
+		this.path.points[1][1] = position.y;
+		this.endSprite.position = this.origin;
 	}
 	
 }

@@ -43,11 +43,11 @@ class TileMap extends Container {
 	}
 	pixelToMapPos(pos) {
 		const { tileW, tileH } = this;
-		return new Vector (	Math.floor(pos.x / tileW), Math.floor(pos.y / tileH));
+		return {x:Math.floor(pos.x / tileW), y:Math.floor(pos.y / tileH)};
 	}
 	mapToPixelPos(mapPos) {
 		const { tileW, tileH } = this;
-		return new Vector (mapPos.x * tileW, mapPos.y * tileH);
+		return {x:mapPos.x * tileW, y:mapPos.y * tileH};
 	}
 	tileAtMapPos(mapPos) {
 		return this.children[mapPos.y * this.mapW + mapPos.x];
