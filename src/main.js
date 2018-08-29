@@ -44,22 +44,23 @@ camera.add(racer);;
 scene.add(location);
 scene.add(tiles);
 
-let position = {x:0, y:0};
-let currentTile = 0;
+var position = {x:0, y:0};
+var currentTile = 0;
 let wPos = [];
 
 game.run(() => {
   // collision detection
-  position = {x:Math.floor(racer.position.x), y:Math.floor(racer.position.y)};
+  position.x = racer.position.x + racer.whiskers.children[2].end.x;
+  position.y = racer.position.y + racer.whiskers.children[2].end.y;
   currentTile = level.tileAtPixelPos(position);
   wPos = [];
   let j = 0;
   //for (j = 0; j < racer.whiskers.children.length - 1; j++); {
-	  const m = level.pixelToMapPos(racer.whiskers.children[2].position);
+	  const m = level.pixelToMapPos(position);
 	  
 	  //wPos.push([Math.floor(racer.whiskers.children[j].position.x), Math.floor(racer.whiskers.children[j].position.y)]);
   //}
-  location.text = "Location: " + JSON.stringify(m) + JSON.stringify(racer.whiskers.children[2].position);
+  location.text = "Location: " + JSON.stringify(m);
   //location.text = m;
   //tiles.text = "Current Tile: " + JSON.stringify(currentTile);
   tiles.text = "Current Tile: " + currentTile.frame.id;

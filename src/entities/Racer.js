@@ -50,7 +50,9 @@ class Racer extends Container {
 		for (let k = -2; k < 3; k++) {
 			const origin = [12, k * 3];
 			const w = new Whisker (
-				[origin, [100*Math.cos( Math.abs(k) * Math.PI/8) + origin[0], 100 * Math.sin( k * Math.PI/8) + origin[1]]],
+				origin,
+				100,
+				k * Math.PI/8,
 				new Sprite(new Texture("./res/crosshairs/PNG/White/crosshair001.png")),
 				new Sprite(new Texture("./res/crosshairs/PNG/White/crosshair006.png")));
 			this.whiskers.add(w);
@@ -89,7 +91,8 @@ class Racer extends Container {
 		this.position.x += deltaP.x;
 		this.position.y += deltaP.y;
 		//now update the position of the whiskers
-		//this.whiskers.children[2].update(deltaP);
+		
+		//this.whiskers.children[2].update(math.rand(-1,2));
 		
 		
 		//this.position.y += this.controls.y;
