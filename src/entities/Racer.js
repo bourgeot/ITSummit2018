@@ -23,45 +23,47 @@ const spriteRotation = Math.PI/2;
 class Racer extends Container {
 	constructor(startPosition) {
 		super();
+
 		this.position = new Vector(startPosition.x, startPosition.y);
+		this.velocity = new Vector(0,0);
 		this.speed = 0;
 		this.theta = 0;
 		this.controls = new KeyControls();
 		this.pivot = new Vector(-20, 0);
+		this.pLength = this.pivot.magnitude();
+
 		//auto is 40 x 70 pixels
-		const auto = new Sprite(new Texture("./res/Images/PNG/Cars/car_blue_small_1.png"));	
-		auto.rotation = spriteRotation;
-		auto.anchor = new Vector(35,-20);
+		const auto = new Sprite(new Texture("./res/Images/PNG/Cars/car_blue_small_1.png"));
+		auto.anchor = new Vector(-20,-35); //puts the center on the position
+		auto.pivot = {x:20,y:35};		//moves the rotation point to the center
+		auto.rotation = spriteRotation;  //rotates the sprite.
+
 		this.add(auto);
 		this.hitBox = new Rectangle(60,34);
-		this.hitBox.anchor = auto.anchor.plus(-65,2);
+		//this.hitBox.anchor = ;
 		//this.add(this.hitBox);
-		//const whisker1 = new Sprite(new Texture("./res/crosshairs/PNG/White/crosshair006.png"));
-		//const w1O = new Sprite(new Texture("./res/crosshairs/PNG/White/crosshair001.png"));
-		//whisker1.anchor = new Vector(-32, -32);
-		//w1O.anchor = new Vector(-32,-32);
-		//whisker1.position = new Vector (122, 0);
-		//w1O.position = new Vector (22, 0);
-		//this.add(whisker1);
-		//this.add(w1O);
 //			const w2 = new Whisker(
 //				[[12,-4], [100*Math.cos(Math.PI/8) + 12, -100*Math.sin(Math.PI/8) - 4]],
 		this.whiskers = new Container();
 		for (let k = -2; k < 3; k++) {
-			const origin = [12, k * 3];
+			const origin = [10, k * 3];
 			const w = new Whisker (
 				origin,
-				100,
+				50,
 				k * Math.PI/8,
 				new Sprite(new Texture("./res/crosshairs/PNG/White/crosshair001.png")),
 				new Sprite(new Texture("./res/crosshairs/PNG/White/crosshair006.png")));
 			this.whiskers.add(w);
 		}
 		this.add(this.whiskers);
-		//console.log(this);
 		//console.log(w2, w2.lengthSquared());
 	}
+	whiskerLocation(whisker) {
+		//returns the position of the end of the whisker
+		return this.whiskers.children[whisker].end;
+	}
 	update(dt, t) {
+		var dTheta = 0;
 		//if up arrow is pressed
 		if (this.controls.y == -1 ) {
 			this.speed += maxAcc * dt;
@@ -74,24 +76,35 @@ class Racer extends Container {
 		//if right arrow is pressed
 		if (this.controls.x == 1) {
 			//there is a clockwise rotation
-			this.theta += maxTurnSpeed * dt;
+			dTheta = maxTurnSpeed * dt;
 		}
 		if (this.controls.x == -1) {
 			//there is a counter clockwise rotation
-			this.theta -= maxTurnSpeed * dt;
+			 dTheta = - maxTurnSpeed * dt;
 		}
+		this.theta = this.theta + dTheta;
 		this.theta = this.theta % (Math.PI * 2);
-		//check for contact between the whiskers and tile boundaries
-		
-		
-		
-		//update he angle and position of the car
 		this.rotation = this.theta;
-		const deltaP = {x:this.speed * dt * Math.cos(this.theta), y:this.speed * dt * Math.sin(this.theta)};
-		this.position.x += deltaP.x;
-		this.position.y += deltaP.y;
+		//check for contact between the whiskers and tile boundaries
+		//x ′ = x cos ⁡ θ − y sin ⁡ θ
+		//y ′ = x sin ⁡ θ + y cos ⁡ θ 
+		//update he angle and position of the car
+		//const deltaP = {x: (this.pLength + this.speed * dt) * Math.cos(this.theta), y:(this.pLength + this.speed * dt) * Math.sin(this.theta)};
+		if (this.speed * dt > .00001) {
+			const deltaP = {x: (this.speed * dt) * Math.cos(this.theta),
+				y:(this.speed * dt) * Math.sin(this.theta)};
+			this.position.x += deltaP.x;
+			this.position.y += deltaP.y;
+		}
+		//else if (dTheta > .00001 || dTheta < -.00001) {
+		//	this.position.x +=  Math.cos(dTheta) -  Math.sin(dTheta);
+		//	this.position.y +=  Math.sin(dTheta) +  Math.cos(dTheta);
+		//}
+		const deltaR = 0;
 		//now update the position of the whiskers
-		
+		//for(let i=0; i < this.whiskers.children.length -1; i++) {
+		//	this.whiskers.children[i].update(deltaR);
+		//}
 		//this.whiskers.children[2].update(math.rand(-1,2));
 		
 		

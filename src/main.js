@@ -14,7 +14,7 @@ const { Container, Text, CanvasRenderer, KeyControls, TileSprite, Sprite, Textur
 const game = new Game(640, 480, '#board');
 const { scene, w, h } = game;
 const level = new Level(128 * 10, 128 * 10 );
-const racer = new Racer({x:130, y:200});
+const racer = new Racer({x:128, y:128});
 
 const camera = new Camera(
 	 racer,
@@ -45,14 +45,19 @@ scene.add(location);
 scene.add(tiles);
 
 var position = {x:0, y:0};
-var currentTile = 0;
 let wPos = [];
+console.log(racer.whiskerLocation(2));
 
 game.run(() => {
   // collision detection
-  position.x = racer.position.x + racer.whiskers.children[2].end.x;
-  position.y = racer.position.y + racer.whiskers.children[2].end.y;
+	var currentTile;
+//  position.x = racer.position.x + racer.whiskers.children[2].end.x;
+ // position.y = racer.position.y + racer.whiskers.children[2].end.y;
   currentTile = level.tileAtPixelPos(position);
+  position.x = Math.floor(racer.position.x + racer.whiskerLocation(1).x);
+  position.y = Math.floor(racer.position.y+ racer.whiskerLocation(1).y);
+  const v = {x: position.x + racer.whiskerLocation(2).x, y: position.y + racer.whiskerLocation(2).y};
+  const w = level.pixelToMapPos(v);
   wPos = [];
   let j = 0;
   //for (j = 0; j < racer.whiskers.children.length - 1; j++); {
@@ -60,10 +65,10 @@ game.run(() => {
 	  
 	  //wPos.push([Math.floor(racer.whiskers.children[j].position.x), Math.floor(racer.whiskers.children[j].position.y)]);
   //}
-  location.text = "Location: " + JSON.stringify(m);
+  location.text = "Location: " + JSON.stringify(m) + " " + JSON.stringify(position);
   //location.text = m;
   //tiles.text = "Current Tile: " + JSON.stringify(currentTile);
-  tiles.text = "Current Tile: " + currentTile.frame.id;
+  tiles.text = "Current Tile: " + currentTile.frame.id + " " + JSON.stringify(racer.whiskerLocation(2));
 
   //find out where the player is and add the tiles to the screen
   
