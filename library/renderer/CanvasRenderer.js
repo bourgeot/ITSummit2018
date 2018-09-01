@@ -73,6 +73,12 @@ class CanvasRenderer {
 					for (let i = 1; i < child.points.length; i++) {
 						ctx.lineTo(child.points[i][0], child.points[i][1]);	
 					}
+					if(child.points[0].x) {
+						ctx.moveTo(child.points[0].x, child.points[0].y);
+						for (let i = 1; i < child.points.length; i++) {
+							ctx.lineTo(child.points[i].x, child.points[i].y);	
+						}		
+					}
 					//ctx.closePath();
 					ctx.stroke();
 					//ctx.fillStyle = child.style.fill;

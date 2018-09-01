@@ -11,15 +11,15 @@ class Whisker extends Container {
 		this.theta = theta;
 		this.length = r;
 		this.position = new Vector(origin[0], origin[1]);
-		this.end = this.position.clone().add({x:r * Math.cos(this.theta), y:r * Math.sin(this.theta)});
+		this.end = this.position.clone().add({x:Math.round(r * Math.cos(this.theta)), y:Math.round(r * Math.sin(this.theta))});
 		const originSprite = oSprite;
 		originSprite.anchor = {x: -32, y: -32};
 		originSprite.position = this.position;
 		this.endSprite = eSprite;
 		this.endSprite.anchor = {x: -32, y: -32};
 		this.endSprite.position = this.end;
-		this.path = new Path([[this.position.x, this.position.y],[this.end.x, this.end.y]]);
-		this.path.position = origin;
+		this.path = new Path([{x:this.position.x, y:this.position.y},{x:this.end.x, y:this.end.y}]);
+		//this.path.position = origin;
 		this.add(this.path);
 		this.add(originSprite);
 		this.add(this.endSprite);
@@ -40,8 +40,8 @@ class Whisker extends Container {
 		//console.log('here');
 		this.end.x += deltaR * Math.cos(this.theta);
 		this.end.y += deltaR * Math.sin(this.theta);
-		this.path.points[1][0] = this.end.x;
-		this.path.points[1][1] = this.end.y;
+		this.path.points[1] = this.end;
+		//this.path.points[1][1] = this.end.y;
 		this.endSprite.position = this.end;
 	}
 	

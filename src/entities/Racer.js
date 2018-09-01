@@ -28,8 +28,9 @@ class Racer extends Container {
 		this.velocity = new Vector(0,0);
 		this.speed = 0;
 		this.theta = 0;
+		this.rotation = 0;
 		this.controls = new KeyControls();
-		this.pivot = new Vector(-20, 0);
+		this.pivot = new Vector(0, 0);
 		this.pLength = this.pivot.magnitude();
 
 		//auto is 40 x 70 pixels
@@ -46,24 +47,24 @@ class Racer extends Container {
 //				[[12,-4], [100*Math.cos(Math.PI/8) + 12, -100*Math.sin(Math.PI/8) - 4]],
 		this.whiskers = new Container();
 		for (let k = -2; k < 3; k++) {
-			const origin = [10, k * 3];
+			const origin = [0, k * 3];
 			const w = new Whisker (
 				origin,
-				50,
+				70,
 				k * Math.PI/8,
 				new Sprite(new Texture("./res/crosshairs/PNG/White/crosshair001.png")),
-				new Sprite(new Texture("./res/crosshairs/PNG/White/crosshair006.png")));
+				new Sprite(new Texture("./res/crosshairs/PNG/White/crosshair001.png")));
 			this.whiskers.add(w);
 		}
 		this.add(this.whiskers);
 		//console.log(w2, w2.lengthSquared());
 	}
 	whiskerLocation(whisker) {
-		//returns the position of the end of the whisker in world coordinates based on 
+		//returns the position of the end of the whisker in racer local coordinates based on 
 		//the car position, pivot, and theta
 		var v = this.pivot.clone();
-		v = v.rotate(this.theta).add(this.whiskers.children[whisker].end);
-		return v;
+		v.add(this.whiskers.children[whisker].end).rotate(this.theta);
+		return {x: Math.round(v.x), y: Math.round(v.y), theta: this.theta};
 	}
 	update(dt, t) {
 		var dTheta = 0;

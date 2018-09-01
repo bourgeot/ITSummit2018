@@ -23,23 +23,23 @@ function hits (entity, container, hitCallback) {
 function intersection(pathA, pathB) {
 	//check and see if two paths intersect
 	//assume the paths are defined by two lines
-	console.log(pathA);
-	console.log(pathB);
-	const denom = ((pathB[1][1] - pathB[0][1]) * (pathA[1][0] - pathA[0][0])) -
-		((pathB[1][0] - pathB[0][0]) * (pathA[1][1] - pathA[0][1]));
-		console.log(denom);
+	//console.log(pathA);
+	//console.log(pathB);
+	const denom = ((pathB[1].y - pathB[0].y) * (pathA[1].x - pathA[0].x)) -
+		((pathB[1].x - pathB[0].x) * (pathA[1].y - pathA[0].y));
+		//console.log(denom);
 	if (denom == 0) return null;
 
 	else {
 		//define t and u as parameters (per wikipedia Line-line intersection)
-		const t = (((pathB[1][0] - pathB[0][0]) * (pathA[0][1] - pathB[1][1])) -
-			((pathB[1][1] - pathB[0][1]) * (pathA[0][0] - pathB[0][0])))/denom;
-		const u = (((pathA[1][0] - pathA[0][0]) * (pathA[0][1] - pathB[0][1])) -
-			((pathA[1][1] - pathA[0][1]) * (pathA[0][0] - pathB[0][0])))/denom;
+		const t = (((pathB[1].x - pathB[0].x) * (pathA[0].y - pathB[1].y)) -
+			((pathB[1].y - pathB[0].y) * (pathA[0].x - pathB[0].x)))/denom;
+		const u = (((pathA[1].x - pathA[0].x) * (pathA[0].y - pathB[0].y)) -
+			((pathA[1].y - pathA[0].y) * (pathA[0].x - pathB[0].x)))/denom;
 		//boundary tests
 		if (t < 0 || t > 1 || u < 0 || u > 1) return null;
-		else return {x: pathA[0][0] + t * (pathA[1][0] - pathA[0][0]),
-			y: pathA[0][1] + t * (pathA[1][1] - pathA[0][1])};
+		else return {x: pathA[0].x + t * (pathA[1].x - pathA[0].x),
+			y: pathA[0].y + t * (pathA[1].y - pathA[0].y)};
 	}
 }
 export default {
