@@ -19,7 +19,7 @@ class Whisker extends Container {
 		this.endSprite.anchor = {x: -32, y: -32};
 		this.endSprite.position = this.end;
 		this.path = new Path([[this.position.x, this.position.y],[this.end.x, this.end.y]]);
-		this.path.position = this.origin;
+		this.path.position = origin;
 		this.add(this.path);
 		this.add(originSprite);
 		this.add(this.endSprite);

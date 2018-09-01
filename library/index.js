@@ -10,6 +10,9 @@ import Level from "./Level.js";
 import Game from "./Game.js";
 import math from "./utils/math.js";
 import Camera from "./Camera.js";
+import Rectangle from "./Rectangle.js";
+import Path from "./Path.js";
+import entity from "./utils/entity.js";
 
 
 export default {
@@ -24,5 +27,8 @@ export default {
 	Level,
 	Game,
 	math,
-	Camera
+	Rectangle,
+	Camera, 
+	entity,
+	Path
 };

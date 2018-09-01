@@ -23,8 +23,11 @@ function hits (entity, container, hitCallback) {
 function intersection(pathA, pathB) {
 	//check and see if two paths intersect
 	//assume the paths are defined by two lines
+	console.log(pathA);
+	console.log(pathB);
 	const denom = ((pathB[1][1] - pathB[0][1]) * (pathA[1][0] - pathA[0][0])) -
 		((pathB[1][0] - pathB[0][0]) * (pathA[1][1] - pathA[0][1]));
+		console.log(denom);
 	if (denom == 0) return null;
 
 	else {
@@ -35,8 +38,8 @@ function intersection(pathA, pathB) {
 			((pathA[1][1] - pathA[0][1]) * (pathA[0][0] - pathB[0][0])))/denom;
 		//boundary tests
 		if (t < 0 || t > 1 || u < 0 || u > 1) return null;
-		else return [pathA[0][0] + t * (pathA[1][0] - pathA[0][0]),
-			pathA[0][1] + t * (pathA[1][1] - pathA[0][1])];
+		else return {x: pathA[0][0] + t * (pathA[1][0] - pathA[0][0]),
+			y: pathA[0][1] + t * (pathA[1][1] - pathA[0][1])};
 	}
 }
 export default {

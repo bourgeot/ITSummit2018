@@ -63,7 +63,12 @@ static from (v) {
 		const m = this.length();
 		return new Vector(this.x * m, this.y * m);
 	}
-
+	rotate(theta) {
+		const m = this.magnitude();
+		this.x = m * Math.cos(theta);
+		this.y = m * Math.sin(theta);
+		return this;
+	}
 	angleTo (a) {
 		return Math.acos(this.dot((a) / (this.length() * a.length())));
 	}

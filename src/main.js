@@ -9,12 +9,12 @@
 import GameScreen from "../screens/GameScreen.js";
 import library from "../library/index.js";
 import Racer from "./entities/Racer.js";
-const { Container, Text, CanvasRenderer, KeyControls, TileSprite, Sprite, Texture, Game, Level, Camera, math } = library;
+const { Container, Text, CanvasRenderer, Rectangle, KeyControls, TileSprite, Sprite, Texture, Game, Level, Camera, math, entity, Path } = library;
 
 const game = new Game(640, 480, '#board');
 const { scene, w, h } = game;
 const level = new Level(128 * 10, 128 * 10 );
-const racer = new Racer({x:128, y:128});
+const racer = new Racer({x:333, y:285});
 
 const camera = new Camera(
 	 racer,
@@ -46,29 +46,44 @@ scene.add(tiles);
 
 var position = {x:0, y:0};
 let wPos = [];
-console.log(racer.whiskerLocation(2));
-
+	var currentTile;
+	var wh = racer.whiskers.children[2].path;
+	position.x = Math.floor(racer.position.x + racer.whiskerLocation(2).x);
+	position.y = Math.floor(racer.position.y+ racer.whiskerLocation(2).y);
+	currentTile = level.tileAtPixelPos(position);
+	var p = new Path([currentTile.frame.boundary[0], currentTile.frame.boundary[1]], {fill: "red"});
+	var q = entity.intersection(p.points, wh.points);
+//	console.log(q);
 game.run(() => {
   // collision detection
-	var currentTile;
-//  position.x = racer.position.x + racer.whiskers.children[2].end.x;
- // position.y = racer.position.y + racer.whiskers.children[2].end.y;
-  currentTile = level.tileAtPixelPos(position);
-  position.x = Math.floor(racer.position.x + racer.whiskerLocation(1).x);
-  position.y = Math.floor(racer.position.y+ racer.whiskerLocation(1).y);
-  const v = {x: position.x + racer.whiskerLocation(2).x, y: position.y + racer.whiskerLocation(2).y};
-  const w = level.pixelToMapPos(v);
-  wPos = [];
-  let j = 0;
-  //for (j = 0; j < racer.whiskers.children.length - 1; j++); {
-	  const m = level.pixelToMapPos(position);
-	  
-	  //wPos.push([Math.floor(racer.whiskers.children[j].position.x), Math.floor(racer.whiskers.children[j].position.y)]);
-  //}
-  location.text = "Location: " + JSON.stringify(m) + " " + JSON.stringify(position);
+
+		var bounds = [];
+		var hit = null;
+		position.x = Math.floor(racer.position.x + racer.whiskerLocation(2).x);
+	position.y = Math.floor(racer.position.y+ racer.whiskerLocation(2).y);
+	currentTile = level.tileAtPixelPos(position);
+	//const {boundary} =  currentTile.frame;
+	if (currentTile.frame.bType) {
+		//console.log('hi');
+		for (var i = 0; i < currentTile.frame.boundary.length - 1; i++) {
+			bounds.push(new Path([currentTile.frame.boundary[i], currentTile.frame.boundary[i+1]], {fill: "red"}));
+		}
+	}
+	//console.log(bounds.length);
+	for (var i = 0; i < bounds.length; i++) {
+		//console.log(bounds[i]);
+		//console.log(racer.whiskers.children[2].path);
+		q = entity.intersection(bounds[i].points, racer.whiskers.children[2].path.points);
+		//console.log(q);
+		if(q !== null) {
+			console.log('hit');
+		}
+	}
+	location.text = "Location: " + JSON.stringify(racer.position) + " " + JSON.stringify(position);
   //location.text = m;
   //tiles.text = "Current Tile: " + JSON.stringify(currentTile);
-  tiles.text = "Current Tile: " + currentTile.frame.id + " " + JSON.stringify(racer.whiskerLocation(2));
+  tiles.text = "Current Tile: " + currentTile.frame.id + 
+	" " + JSON.stringify({x:Math.floor(racer.whiskerLocation(2).x), y: Math.floor(racer.whiskerLocation(2).y)});
 
   //find out where the player is and add the tiles to the screen
   

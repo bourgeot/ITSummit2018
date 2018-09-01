@@ -15,6 +15,7 @@ class Level extends TileMap {
 		// Describe the tiles in metadata
 		//walls are 20 px  wide.
 		//arc syntax: context.arc(x,y,r,sAngle,eAngle,counterclockwise) 0 is at {1,0}
+
 		const tileIndex = [
 			{fn: 1, id: "nwall", x: 0, y: 0, bType: "path", boundary: [[0,20], [128,20]]},
 			{fn: 2, id: "swall", x: 3, y: 9, bType: "path", boundary: [[0,108],[128,108]]},

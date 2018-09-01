@@ -59,8 +59,11 @@ class Racer extends Container {
 		//console.log(w2, w2.lengthSquared());
 	}
 	whiskerLocation(whisker) {
-		//returns the position of the end of the whisker
-		return this.whiskers.children[whisker].end;
+		//returns the position of the end of the whisker in world coordinates based on 
+		//the car position, pivot, and theta
+		var v = this.pivot.clone();
+		v = v.rotate(this.theta).add(this.whiskers.children[whisker].end);
+		return v;
 	}
 	update(dt, t) {
 		var dTheta = 0;
