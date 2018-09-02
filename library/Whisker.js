@@ -1,5 +1,6 @@
 import Path from "./Path.js";
 import Container from "./Container.js";
+import math from "./utils/math.js";
 import Vector from "./utils/Vector.js";
 
 const spriteSize = 64;
@@ -9,7 +10,7 @@ class Whisker extends Container {
 		//const points = points;
 		//make the position the same as the end point
 		this.theta = theta;
-		this.maxLength = r;
+		this.MAX_LENGTH = r;
 		this.length = r;
 		this.position = new Vector(origin[0], origin[1]);
 		this.end = this.position.clone().add({x:Math.round(r * Math.cos(this.theta)), y:Math.round(r * Math.sin(this.theta))});
@@ -30,8 +31,8 @@ class Whisker extends Container {
 		this.end.set(point);
 		this.endSprite.position = this.end;
 	}
-	setLength(r=this.maxLength) {
-		this.length = r;
+	setLength(r = this.MAX_LENGTH) {
+		this.length = math.clamp(r, 20, this.MAX_LENGTH);
 		const rx = r * Math.cos(this.theta);
 		const ry = r * Math.sin(this.theta) 
 		this.end.set(rx, ry);

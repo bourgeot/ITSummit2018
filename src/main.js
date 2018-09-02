@@ -62,11 +62,11 @@ var position = {x:0, y:0};
 	//var q = entity.intersection(p.points, wh.points);
 	//console.log(p);
 	//console.log(position);
-*/	
+	
 for (var zz  = 0; zz < racer.whiskers.children.length; zz++) {
 	console.log(racer.whiskerLocation(zz));
 }
-
+*/
 game.run(() => {
   // collision detection
 		var n,p, q = null;
@@ -83,67 +83,44 @@ game.run(() => {
 			position = {x: Math.round(racerPos.x + racer.whiskerLocation(i).x),
 				y:Math.round(racerPos.y + racer.whiskerLocation(i).y)};
 			currentTile = level.tileAtPixelPos(position);
-			if (currentTile.frame.bType) {
-				location.text = currentTile.id;
-				for (a = 0; a < currentTile.frame.boundary.length -1; a++ ) {
-					bounds.push(
-						[
-							{x:currentTile.position.x + currentTile.frame.boundary[a][0],
-								y:currentTile.position.y + currentTile.frame.boundary[a][1]},
-							{x:currentTile.position.x + currentTile.frame.boundary[a+1][0],
-								y:currentTile.position.y + currentTile.frame.boundary[a+1][1]}
-						]);
+			//get the current length;
+			r = racer.whiskers.children[i].length;
+			//console.log(r);
+			for (j = 0; j < 2; j++) {
+				if (j > 0) {
+					//I may want to add 'front of car' in addition to the middle of the car
+					currentTile = level.tileAtPixelPos(racerPos);
 				}
-				for ( b = 0; b < bounds.length; b++) {
-					hit = entity.intersection([racerPos, position], bounds[b]);
-					r = 0;
-					if (hit !== null) {
-						location.text = "Whisker " + i + "hit.";
-						bHit = true;
-						r = Math.sqrt((hit.x - racerPos.x) * (hit.x - racerPos.x) +
-							(hit.y - racerPos.y) * (hit.y - racerPos.y));
-						racer.whiskers.children[i].setLength(r);
+				if (currentTile.frame.bType) {
+					location.text = currentTile.id;
+					for (a = 0; a < currentTile.frame.boundary.length -1; a++ ) {
+						bounds.push(
+							[
+								{x:currentTile.position.x + currentTile.frame.boundary[a][0],
+									y:currentTile.position.y + currentTile.frame.boundary[a][1]},
+								{x:currentTile.position.x + currentTile.frame.boundary[a+1][0],
+									y:currentTile.position.y + currentTile.frame.boundary[a+1][1]}
+							]);
 					}
-				}
-				if(!bHit) {
-					racer.whiskers.children[i].setLength();
+					for ( b = 0; b < bounds.length; b++) {
+						hit = entity.intersection([racerPos, position], bounds[b]);
+						if (hit !== null) {
+							location.text = "Whisker " + i + "hit.";
+							bHit = true;
+							r = Math.sqrt((hit.x - racerPos.x) * (hit.x - racerPos.x) +
+								(hit.y - racerPos.y) * (hit.y - racerPos.y));
+							racer.whiskers.children[i].setLength(r);
+						}
+					}
+					if(!bHit) {
+						//return to previous value
+						//console.log(r);
+						racer.whiskers.children[i].setLength();
+					}
 				}
 			}
 			bHit = false;
 		}
-	/*
-	if (currentTile.frame.bType) {
-		//console.log('hi');
-		p = [
-			{x:currentTile.position.x + currentTile.frame.boundary[0][0],
-				y:currentTile.position.y + currentTile.frame.boundary[0][1]},
-			{x:currentTile.position.x + currentTile.frame.boundary[1][0],
-				y:currentTile.position.y + currentTile.frame.boundary[1][1]}
-		];
-		n = [ racer.position, position];
-
-		q = entity.intersection(p, n);
-		var zz = 0;
-		if (q !== null) {
-			//q is in world coordinates. Set the end in relative coordinates.
-			zz = Math.sqrt((q.x - n[0].x) *(q.x - n[0].x) + (q.y - n[0].y)*(q.y - n[0].y));
-			 //zz = JSON.stringify({x: q.x - n[0].x, y: q.y - n[0].y});
-			//racer.whiskers.children[2].setEnd(q);
-			racer.whiskers.children[2].setLength(zz);
-			
-		}
-		else {
-			racer.whiskers.children[2].setLength();
-		}
-	}
-	*/
-	//console.log(bounds.length);
-
-	//location.text = "Whisker 2 Location: " +  JSON.stringify(position) + " " + JSON.stringify(q) ;
-  //location.text = m;
-  //tiles.text = "Current Tile: " + JSON.stringify(currentTile);
- // tiles.text = "Current Tile: " + currentTile.frame.id + 
-	//"Boundary Location " + JSON.stringify(p[0]) + ", " + JSON.stringify(p[1]);
 
   //find out where the player is and add the tiles to the screen
   

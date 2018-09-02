@@ -57,7 +57,8 @@ class Level extends TileMap {
 			{fn: 31, id: "swallchecker", x: 0, y: 5},
 			{fn: 32, id: "openchecker", x: 0, y: 6},
 			{fn: 33, id: "nwallchecker", x: 0, y: 7},
-			{fn: 34, id: "grass", x: 7, y: 9},
+			{fn: 34, id: "grass", x: 7, y: 9, bType: "path", 
+				boundary:[[0,0],[0,128],[128,128],[128,0],[0,0]]},
 			{fn: 35, id: "dirttriangle", x: 7, y: 14}
 			
 		];

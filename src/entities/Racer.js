@@ -47,7 +47,8 @@ class Racer extends Container {
 //				[[12,-4], [100*Math.cos(Math.PI/8) + 12, -100*Math.sin(Math.PI/8) - 4]],
 		this.whiskers = new Container();
 		for (let k = -2; k < 3; k++) {
-			const origin = [0, k * 3];
+			//const origin = [0, k * 3];
+			const origin = [0,0];
 			const w = new Whisker (
 				origin,
 				100,
@@ -57,7 +58,7 @@ class Racer extends Container {
 			this.whiskers.add(w);
 		}
 		this.add(this.whiskers);
-		console.log(this.whiskers.children);
+		//console.log(this.whiskers.children);
 	}
 	whiskerLocation(whisker) {
 		//returns the position of the end of the whisker in racer local coordinates based on 
