@@ -31,15 +31,16 @@ function intersection(pathA, pathB) {
 	if (denom == 0) return null;
 
 	else {
+		//t = (a0x - b0x)*(b0y-b1y) - (a0y - b0y) * (b0x - b1x) 
+		const t = (((pathA[0].x - pathB[0].x) * (pathB[0].y - pathB[1].y)) -
+			((pathA[0].y - pathB[0].y) * (pathB[0].x - pathB[1].x)))/denom;
 		//define t and u as parameters (per wikipedia Line-line intersection)
-		const t = (((pathB[1].x - pathB[0].x) * (pathA[0].y - pathB[1].y)) -
-			((pathB[1].y - pathB[0].y) * (pathA[0].x - pathB[0].x)))/denom;
 		const u = (((pathA[1].x - pathA[0].x) * (pathA[0].y - pathB[0].y)) -
 			((pathA[1].y - pathA[0].y) * (pathA[0].x - pathB[0].x)))/denom;
 		//boundary tests
 		if (t < 0 || t > 1 || u < 0 || u > 1) return null;
-		else return {x: pathA[0].x + t * (pathA[1].x - pathA[0].x),
-			y: pathA[0].y + t * (pathA[1].y - pathA[0].y)};
+		else return {x: Math.round(pathA[0].x + t * (pathA[1].x - pathA[0].x)),
+			y: Math.round(pathA[0].y + t * (pathA[1].y - pathA[0].y))};
 	}
 }
 export default {

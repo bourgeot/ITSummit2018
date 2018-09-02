@@ -9,6 +9,7 @@ class Whisker extends Container {
 		//const points = points;
 		//make the position the same as the end point
 		this.theta = theta;
+		this.maxLength = r;
 		this.length = r;
 		this.position = new Vector(origin[0], origin[1]);
 		this.end = this.position.clone().add({x:Math.round(r * Math.cos(this.theta)), y:Math.round(r * Math.sin(this.theta))});
@@ -20,16 +21,21 @@ class Whisker extends Container {
 		this.endSprite.position = this.end;
 		this.path = new Path([{x:this.position.x, y:this.position.y},{x:this.end.x, y:this.end.y}]);
 		//this.path.position = origin;
-		this.add(this.path);
+		//this.add(this.path);
 		this.add(originSprite);
 		this.add(this.endSprite);
 		
 	}
-	setLength(r) {
+	setEnd(point) {
+		this.end.set(point);
+		this.endSprite.position = this.end;
+	}
+	setLength(r=this.maxLength) {
 		this.length = r;
 		const rx = r * Math.cos(this.theta);
 		const ry = r * Math.sin(this.theta) 
 		this.end.set(rx, ry);
+		this.endSprite.position = this.end;
 		return this;
 	}
 	lengthSquared () {

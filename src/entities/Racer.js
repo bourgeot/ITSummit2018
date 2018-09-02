@@ -50,21 +50,27 @@ class Racer extends Container {
 			const origin = [0, k * 3];
 			const w = new Whisker (
 				origin,
-				70,
+				100,
 				k * Math.PI/8,
 				new Sprite(new Texture("./res/crosshairs/PNG/White/crosshair001.png")),
 				new Sprite(new Texture("./res/crosshairs/PNG/White/crosshair001.png")));
 			this.whiskers.add(w);
 		}
 		this.add(this.whiskers);
-		//console.log(w2, w2.lengthSquared());
+		console.log(this.whiskers.children);
 	}
 	whiskerLocation(whisker) {
 		//returns the position of the end of the whisker in racer local coordinates based on 
 		//the car position, pivot, and theta
-		var v = this.pivot.clone();
-		v.add(this.whiskers.children[whisker].end).rotate(this.theta);
-		return {x: Math.round(v.x), y: Math.round(v.y), theta: this.theta};
+		const w = this.whiskers.children[whisker];
+		//var v = {x:0,y:0};
+		var h = new Vector(w.position.x,w.position.y);
+		//var h = new Vector(0,0);
+		//v.x = this.whiskers.children[whisker].end.x;
+		//v.y = this.whiskers.children[whisker].end.y;
+		h.add(w.end).rotate(w.theta + this.theta);
+		//v.rotate(this.theta);
+		return {x: Math.round(h.x), y: Math.round(h.y), theta: this.theta};
 	}
 	update(dt, t) {
 		var dTheta = 0;
