@@ -5,10 +5,12 @@ import Vector from "./utils/Vector.js";
 
 const spriteSize = 64;
 class Whisker extends Container {
-	constructor(origin, r, theta, oSprite, eSprite) {
+	constructor(id, fatalDistance, origin, r, theta, oSprite, eSprite) {
 		super();
 		//const points = points;
 		//make the position the same as the end point
+		this.id = id;
+		this.fatalDistance = fatalDistance;
 		this.theta = theta;
 		this.MAX_LENGTH = r;
 		this.length = r;
