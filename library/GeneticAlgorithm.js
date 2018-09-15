@@ -1,9 +1,11 @@
 
 class GeneticAlgorithm {
-constructor() {
+	constructor() {
 
-}
-
+	}
+	epoch(){
+		//
+	}
 
 }
 export default GeneticAlgorithm;

@@ -1,5 +1,5 @@
 
-class Evolution {
+class Epoch {
 	constructor() {
 
 	}
@@ -8,4 +8,4 @@ class Evolution {
 	}
 
 }
-export default Evolution;
+export default Epoch;

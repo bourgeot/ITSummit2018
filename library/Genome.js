@@ -10,11 +10,15 @@ const STEP_SIZE  = 0;
 
 
 class Genome {
-	constructor() {
-		this.genes = [];
+	constructor(ID, inputs, outputs) {
+		//this creates a basic genome where all the input nodes are connected to the 
+		//output nodes with no intervening structure and some basic weights.
+		this.ID = ID;
+		this.connectionGenes = [];
+		this.nodeGenes = [];
 		this.fitness = 0;
 		this.adjustedFitness = 0;
-		this.network = {};
+		this.network = {};  //phenotype
 		this.maxNeuron = 0;
 		this.globalRank = 0;
 		this.mutationRates = {
@@ -26,6 +30,9 @@ class Genome {
 			disable: DISABLE_MUTATION_CHANCE,
 			step: STEP_SIZE
 		};
+		for (let i=0; i < inputs; i++0) {
+			
+		}
 	}
 	static from (g) {
 		return new Genome().copy(g);
@@ -33,7 +40,7 @@ class Genome {
 	copy ({genes, fitness, adjustedFitness, network, maxNeuron, globalRank, mutationRates}) {
 		//make a copy of the genes
 		for (let i=0; i < genes.length; i++) {
-			this.genes.append(genes[i].from());
+			this.genes.append(Gene.from(genes[i]));
 		}
 		//this.genes = genes;
 		this.fitness = fitness;
@@ -44,58 +51,33 @@ class Genome {
 		this.mutationRates = mutationRates;
 		return this;
 	}
-	mutate() {
-		for mutation,rate in pairs(genome.mutationRates) do
-			if math.random(1,2) == 1 then
-				genome.mutationRates[mutation] = 0.95*rate
-			else
-				genome.mutationRates[mutation] = 1.05263*rate
-			end
-		end
-
-		if math.random() < genome.mutationRates["connections"] then
-			pointMutate(genome)
-		end
+	addNode () {
 		
-		local p = genome.mutationRates["link"]
-		while p > 0 do
-			if math.random() < p then
-				linkMutate(genome, false)
-			end
-			p = p - 1
-		end
-
-		p = genome.mutationRates["bias"]
-		while p > 0 do
-			if math.random() < p then
-				linkMutate(genome, true)
-			end
-			p = p - 1
-		end
+	}
+	addConnection (GeneticAlgorithm) {
+		if (Math.random() > this.mutationRates.connections) {
+			return;
+		}
+		//
 		
-		p = genome.mutationRates["node"]
-		while p > 0 do
-			if math.random() < p then
-				nodeMutate(genome)
-			end
-			p = p - 1
-		end
+	}
+	mutateWeights () {
 		
-		p = genome.mutationRates["enable"]
-		while p > 0 do
-			if math.random() < p then
-				enableDisableMutate(genome, true)
-			end
-			p = p - 1
-		end
-
-		p = genome.mutationRates["disable"]
-		while p > 0 do
-			if math.random() < p then
-				enableDisableMutate(genome, false)
-			end
-			p = p - 1
-		end
+	}
+	mutateActivationResponse () {
+		
+	}
+	compatibilityScore () {
+		
+	}
+	createPhenotype () {
+		
+	}
+	deletePhenotype () {
+		
+	}
+	sortGenes () {
+		
 	}
 
 }
