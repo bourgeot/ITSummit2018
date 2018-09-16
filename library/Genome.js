@@ -2,6 +2,7 @@
 import NodeGene from "./NodeGene.js";
 import ConnectionGene from "./ConnectionGene.js";
 import InnovationTable from "./InnovationTable.js";
+import Neuron from "./Neuron.js";
 
 class Genome {
 	constructor() {
@@ -63,10 +64,53 @@ class Genome {
 		
 	}
 	createPhenotype () {
-		
+		//instantiate a neural network based on the node and connection genes.
+		//this.connectionGenes;
+		//this.nodeGenes;
+		var nodes = [];
+		//create the neurons from the nodes.
+		//this means summing over all the inputs into the nodes X the weights
+		//[xi*wi]
+		for (let j=0; j < this.nodeGenes.length; j++) {
+			const {
+				ID: nID, 
+				type: nType, 
+				activationResponse: aR, 
+				position: nPos} = this.nodeGenes[j];
+			const node = new Neuron(
+				nID,
+				nType,
+				aR
+			);
+			node.position = nPos;
+			nodes.push(node);
+		}
+		//for each enabled connection, add the inputs and the weights
+		for (let j = 0; j < this.connectionGenes.length; j++) {
+			if (this.connectionGenes[j].enabled) {
+				const {
+					inNode: inN, 
+					outNode: outN, 
+					connectionWeight: weight, 
+					recurrent: rec} = this.connectionGenes[j];
+				let n = nodes.find(function(e) {
+					return e.ID == outN.ID;
+				});
+				n.inputNeurons.push(nodes.find(function(e) {
+					return e.ID == inN.ID;
+				}));
+				n.weights.push(weight);
+				//now where it's the in node, push it to the outno
+				let m = nodes.find(function(e) {
+					return e.ID == inN.ID;
+				});
+				m.outputNeurons.push(n);
+			}
+		}
+		//console.log(nodes);
 	}
 	deletePhenotype () {
-		
+		this.network = {};
 	}
 	sortGenes () {
 		

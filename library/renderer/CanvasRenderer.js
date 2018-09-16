@@ -84,6 +84,11 @@ class CanvasRenderer {
 					//ctx.fillStyle = child.style.fill;
 					//ctx.fill();
 				}
+				else if (child.radius && child.style) {
+					ctx.beginPath();
+					ctx.arc(0,0,child.radius, child.beginTheta, child.endTheta, child.ccw);
+					ctx.stroke();
+				}
 				
 				//handle any children
 				if (child.children) {

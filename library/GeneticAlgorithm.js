@@ -112,7 +112,7 @@ class GeneticAlgorithm {
 				genome.connectionGenes.push(connections[j]);
 			}
 			//now create a phenotype (a neural network) for each genome.
-			genome.createPhenotype();
+			if (i==0) genome.createPhenotype();
 			this.genomes.push(genome);
 			this.genomeID++;
 		}

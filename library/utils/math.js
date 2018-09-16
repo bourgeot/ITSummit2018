@@ -26,6 +26,10 @@ function angle (a, b) {
 function clamp(x, min, max) {
   return Math.max(min, Math.min(x, max));
 }
+//sigmoid function
+function sigmoid(activation, response) {
+	return 1 / (1 + Math.pow(Math.E, activation/response));
+}
 
 export default {
   rand,
@@ -33,5 +37,6 @@ export default {
   randOneIn,
   randOneFrom,
   angle,
+  sigmoid,
   clamp
 };
