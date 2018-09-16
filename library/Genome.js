@@ -1,19 +1,14 @@
-const PRETURBATION_CHANCE = 0;
-const CROSSOVER_CHANCE = 0.75;
-const MUTATE_CONNECTIONS_CHANCE = 0;
-const LINK_MUTATION_CHANCE = 0;
-const BIAS_MUTATION_CHANCE = 0;
-const NODE_MUTATION_CHANCE = 0;
-const ENABLE_MUTATION_CHANCE = 0;
-const DISABLE_MUTATION_CHANCE = 0;
-const STEP_SIZE  = 0;
 
+import NodeGene from "./NodeGene.js";
+import ConnectionGene from "./ConnectionGene.js";
+import InnovationTable from "./InnovationTable.js";
 
 class Genome {
-	constructor(ID, inputs, outputs) {
+	constructor() {
 		//this creates a basic genome where all the input nodes are connected to the 
 		//output nodes with no intervening structure and some basic weights.
-		this.ID = ID;
+		this.InnovationTable = [];
+		this.ID = 0;
 		this.connectionGenes = [];
 		this.nodeGenes = [];
 		this.fitness = 0;
@@ -22,17 +17,14 @@ class Genome {
 		this.maxNeuron = 0;
 		this.globalRank = 0;
 		this.mutationRates = {
-			connections: MUTATE_CONNECTIONS_CHANCE,
-			link: LINK_MUTATION_CHANCE,
-			bias: BIAS_MUTATION_CHANCE,
-			node: NODE_MUTATION_CHANCE,
-			enable: ENABLE_MUTATION_CHANCE,
-			disable: DISABLE_MUTATION_CHANCE,
-			step: STEP_SIZE
+			connections: 0,
+			link: 0,
+			bias: 0,
+			node: 0,
+			enable: 0,
+			disable: 0,
+			step: 0
 		};
-		for (let i=0; i < inputs; i++0) {
-			
-		}
 	}
 	static from (g) {
 		return new Genome().copy(g);
