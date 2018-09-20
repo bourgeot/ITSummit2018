@@ -1,7 +1,7 @@
 import Container from "../library/Container.js";
-
+//level player racer
 class GameScreen extends Container {
-	constructor(game, controls) {
+	constructor(game, controls, onGameOver) {
 		super();
 		//initialization
 		this.level = level;

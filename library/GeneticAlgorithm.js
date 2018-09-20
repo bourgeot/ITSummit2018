@@ -3,6 +3,7 @@ const POPULATION_SIZE = 20;
 const INPUT_NODES = 5;
 const OUTPUT_NODES = 2;
 const PRETURBATION_CHANCE = 0;
+const WEIGHT_REPLACEMENT_CHANCE = 0;
 const CROSSOVER_CHANCE = 0.75;
 const MUTATE_CONNECTIONS_CHANCE = 0;
 const LINK_MUTATION_CHANCE = 0;
@@ -18,12 +19,14 @@ import Genome from "./Genome.js";
 import NodeGene from "./NodeGene.js";
 import ConnectionGene from "./ConnectionGene.js";
 import math from "./utils/math.js";
+import Species from "./Species.js";
 
 class GeneticAlgorithm {
 	constructor() {
 		this.innovationID = 1;
 		this.nodeID = 1;
 		this.genomeID = 1;
+		this.speciesID = 1;
 		this.innovationTable = new InnovationTable(this);
 		this.species = [];
 		this.genomes = [];
@@ -31,6 +34,7 @@ class GeneticAlgorithm {
 	}
 	initialize() {
 		//create POPULATION_SIZE initial Genomes where all the inputs are connected directly to the outputs.
+		//all are members of an initial species.
 		/*
 		first create all the initial nodes and links and add them to the innovation table. These will be common
 		to all the initial genomes created below.
@@ -116,6 +120,9 @@ class GeneticAlgorithm {
 			this.genomes.push(genome);
 			this.genomeID++;
 		}
+	}
+	epoch() {
+		//this is where fitness is evaluated, evolution happens, and a new generation is spawned.
 	}
 }
 export default GeneticAlgorithm;

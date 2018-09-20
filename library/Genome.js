@@ -3,6 +3,7 @@ import NodeGene from "./NodeGene.js";
 import ConnectionGene from "./ConnectionGene.js";
 import InnovationTable from "./InnovationTable.js";
 import Neuron from "./Neuron.js";
+import NeuralNetwork from "./NeuralNetwork.js";
 
 class Genome {
 	constructor() {
@@ -108,6 +109,7 @@ class Genome {
 			}
 		}
 		//console.log(nodes);
+		this.network = new NeuralNetwork(nodes, this.connectionGenes);
 	}
 	deletePhenotype () {
 		this.network = {};

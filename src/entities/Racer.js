@@ -1,5 +1,5 @@
 import Sprite from "../../library/Sprite.js";
-import TileSprite from "../../library/TileSprite.js";
+//import TileSprite from "../../library/TileSprite.js";
 import Texture from "../../library/Texture.js";
 import Container from "../../library/Container.js";
 import KeyControls from "../../library/controls/KeyControls.js";

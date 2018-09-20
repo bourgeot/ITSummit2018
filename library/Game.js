@@ -12,7 +12,8 @@ class Game {
 		this.renderer = new CanvasRenderer(width, height);
 		document.querySelector(parent).appendChild(this.renderer.view);
 		
-		this.scene = new Container();
+		this.scene = new Container(); //<--this.scene will be assigned in main to new GameScreen
+										//gamescreen will 'own' the players, racers, scores, etc.
 
 	}
 	//Methods
