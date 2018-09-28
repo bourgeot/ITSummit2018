@@ -6,17 +6,42 @@
   Check for collisions
   Draw everything
 */
+/*
+	Main conntrol flow will be: 
+	start ga from main and generate initial set of nns
+	write the current configuration to the browser storage
+	then run the game. 
+	when the game ends (bc all the racers have expired or the fitness function is maxed or time has expired)
+	write the current configuration to the local browser storage (update, if all goes well)
+	start another evolution cycle. 
+
+		note: write some storage retrieval functions for writing out or replaying levels.
+*/
+
+
 import GameScreen from "../screens/GameScreen.js";
 import library from "../library/index.js";
-import Racer from "./entities/Racer.js";
-const { Container, Text, CanvasRenderer, Rectangle, KeyControls, TileSprite, Sprite, Texture, Game, Level, Camera, math, entity, Vector, Path } = library;
+//import Racer from "./entities/Racer.js";
+import KeyControls from "../library/controls/KeyControls.js";
+
+import GeneticAlgorithm from "../library/GeneticAlgorithm.js";
+
+
+
+const { Container, Text, CanvasRenderer, Rectangle, TileSprite, Sprite, Texture, Game, Level, Camera, math, entity, Vector, Path } = library;
+/*
 const CONDITION_CLEAR = 0;
 const CONDITION_WARNING = 1;
 const CONDITION_FATAL = 2;
 const FATAL_DISTANCE = 25;
-const game = new Game(640, 480, '#board');
-const { scene, w, h } = game;
-const level = new Level(128 * 10, 128 * 10 );
+*/
+const game = new Game(640, 480, '#gameBoard' );
+const ga = new GeneticAlgorithm();
+const controls = new KeyControls();
+/*
+const { scoreboard, scene, w, h } = game;
+
+//const level = new Level(128 * 10, 128 * 10 );
 const racer = new Racer({x:333, y:302});
 
 const camera = new Camera(
@@ -24,14 +49,15 @@ const camera = new Camera(
 	 { w, h },
 	 { w: level.w, h: level.h }
 );
+
 //scoreboard info
 const location = new Text("Location: ", {
-  font: "15px sans-serif",
+  font: "12px sans-serif",
   fill: "black",
-  align: "center"
+  align: "left"
 });
-location.position.x = w / 2;
-location.position.y = 30;
+location.position.x = 5;
+location.position.y = 10;
 const tiles = new Text("Tiles: ", {
   font: "20px sans-serif",
   fill: "#8B8994",
@@ -44,103 +70,29 @@ tiles.position.y = 60;
 scene.add(camera);
 camera.add(level);
 camera.add(racer);;
-scene.add(location);
+//scene.add(location);
 scene.add(tiles);
+scoreboard.add(location);
 
 var position = {x:0, y:0};
-/*	
-	var currentTile;
-	var wh = racer.whiskerLocation(2);
-	position.x = Math.round(racer.position.x + racer.whiskerLocation(2).x);
-	position.y = Math.round(racer.position.y+ racer.whiskerLocation(2).y);
-	currentTile = level.tileAtPixelPos(position);
-
-	var p = [
-			{x:currentTile.position.x + currentTile.frame.boundary[0][0],
-				y:currentTile.position.y + currentTile.frame.boundary[0][1]},
-			{x:currentTile.position.x + currentTile.frame.boundary[1][0],
-				y:currentTile.position.y + currentTile.frame.boundary[1][1]}
-			];
-	
-	//var q = entity.intersection(p.points, wh.points);
-	//console.log(p);
-	//console.log(position);
-	
-for (var zz  = 0; zz < racer.whiskers.children.length; zz++) {
-	console.log(racer.whiskerLocation(zz));
-}
 */
-game.run(() => {
-  // collision detection
-		var n,p, q = null;
-		var currentTile = 0,  position = {};
-		var r = 0;
-		var i, j, k, a, b, c;
-		var bounds = [];
-		var hit = null, bHit = false, whiskerHits = 0;
-		var currentTiles = [];
-		var positions = [];
-		const racerPos = racer.position;
-		location.text = "";
-		//console.log(racer.whiskerLocation(0));
-		if(racer.alive) {
-			for (i=0; i < racer.whiskers.children.length; i++) {
-				position = {x: Math.round(racerPos.x + racer.whiskerLocation(i).x),
-					y:Math.round(racerPos.y + racer.whiskerLocation(i).y)};
-				currentTile = level.tileAtPixelPos(position);
-				//get the current length;
-				r = racer.whiskers.children[i].length;
-				location.text += "Whisker " + i + ": " + Math.floor(r) + "\n";
-				//console.log(r);
-				for (j = 0; j < 2; j++) {
-					if (j > 0) {
-						//I may want to add 'front of car' in addition to the middle of the car
-						currentTile = level.tileAtPixelPos(racerPos);
-					}
-					if (currentTile.frame.bType) {
-						for (a = 0; a < currentTile.frame.boundary.length -1; a++ ) {
-							bounds.push(
-								[
-									{x:currentTile.position.x + currentTile.frame.boundary[a][0],
-										y:currentTile.position.y + currentTile.frame.boundary[a][1]},
-									{x:currentTile.position.x + currentTile.frame.boundary[a+1][0],
-										y:currentTile.position.y + currentTile.frame.boundary[a+1][1]}
-								]);
-						}
-						for ( b = 0; b < bounds.length; b++) {
-							hit = entity.intersection([racerPos, position], bounds[b]);
-							//location.text = hit;
-							if (hit !== null) {
-								//console.log(i);
-								//location.text = "Whisker " + i + "hit.";
-								bHit = true;
-								whiskerHits++;
-								r = Math.sqrt((hit.x - racerPos.x) * (hit.x - racerPos.x) +
-									(hit.y - racerPos.y) * (hit.y - racerPos.y));
-								racer.whiskers.children[i].setLength(r);
-								racer.setCondition(CONDITION_WARNING);
-								if(r <= FATAL_DISTANCE) {
-									racer.setCondition(CONDITION_FATAL);
-									break;
-								}
-							}
-									//else	location.text = "Whisker " + i + " no hit.";
-						}
-						if(!bHit) {
-							//return to previous value
-							//console.log(r);
-							racer.whiskers.children[i].setLength();
-							//racer.setCondition(CONDITION_CLEAR);
-						}
-					}
-				}
-				bHit = false;
-				if (racer.alive == false) break;
-			}
-			if(whiskerHits <= 0) {
-					racer.setCondition(CONDITION_CLEAR);
-			}
-		}
-  //find out where the player is and add the tiles to the screen
-  
-});
+
+//this will need call backs so that the game, doesn't start until the GA has had a chance to evaluate and evolve a population.
+
+//let's call the current population the set of contestants
+
+function startGame() {
+	//when the ga object has things in it..then enter the game
+  game.scene = new GameScreen(game, controls, ga.genomes, newEpoch);
+}
+function newEpoch() {
+	console.log('game over!');
+}
+function newGA() {
+	//spawn a new world and create neural networks!
+	return ga.initialize();
+	//console.log(ga);
+}
+const ready = newGA();
+if (ready) startGame();
+game.run();

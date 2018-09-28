@@ -120,6 +120,7 @@ class GeneticAlgorithm {
 			this.genomes.push(genome);
 			this.genomeID++;
 		}
+		return this;
 	}
 	epoch() {
 		//this is where fitness is evaluated, evolution happens, and a new generation is spawned.

@@ -9,11 +9,19 @@ class Game {
 	constructor (width, height, parent = 'body') {
 		this.w = width;
 		this.h = height;
+		//a future version should create the internal divs so that index.html doesn't have to define them
+		//document.createElement();  <-- I don't know what arguments this requires
 		this.renderer = new CanvasRenderer(width, height);
-		document.querySelector(parent).appendChild(this.renderer.view);
+		document.querySelector('#gameBoard').appendChild(this.renderer.view);
+		this.hud = new CanvasRenderer(200,300);  // the hud will have quantitative information about the racers
+		document.querySelector('#hud').appendChild(this.hud.view);
+		this.leaderBoard = new CanvasRenderer(200,300); //the leaderBoard will have a visual representation of the lead driver NN
+		document.querySelector('#leaderBoard').appendChild(this.leaderBoard.view);
 		
 		this.scene = new Container(); //<--this.scene will be assigned in main to new GameScreen
-										//gamescreen will 'own' the players, racers, scores, etc.
+										//gamescreen will 'own' the players, racers, scores, etc. 
+		this.scoreboard = new Container();
+		this.frontrunner = new Container();
 
 	}
 	//Methods
@@ -29,6 +37,8 @@ class Game {
 			this.scene.update(deltaT, t);
 			gameUpdate(deltaT, t);
 			this.renderer.render(this.scene);
+			this.hud.render(this.scoreboard);
+			this.leaderBoard.render(this.frontrunner);
 		};
 		requestAnimationFrame(gameLoop);
 	}
