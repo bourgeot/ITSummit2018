@@ -23,12 +23,12 @@ import GameScreen from "../screens/GameScreen.js";
 import library from "../library/index.js";
 //import Racer from "./entities/Racer.js";
 import KeyControls from "../library/controls/KeyControls.js";
-
+import Game from "../library/Game.js";
 import GeneticAlgorithm from "../library/GeneticAlgorithm.js";
 
 
 
-const { Container, Text, CanvasRenderer, Rectangle, TileSprite, Sprite, Texture, Game, Level, Camera, math, entity, Vector, Path } = library;
+//const { Container, Text, CanvasRenderer, Rectangle, TileSprite, Sprite, Texture, Game, Level, Camera, math, entity, Vector, Path } = library;
 /*
 const CONDITION_CLEAR = 0;
 const CONDITION_WARNING = 1;
@@ -38,44 +38,10 @@ const FATAL_DISTANCE = 25;
 const game = new Game(640, 480, '#gameBoard' );
 const ga = new GeneticAlgorithm();
 const controls = new KeyControls();
-/*
-const { scoreboard, scene, w, h } = game;
+const ready = newGA();
+if (ready) startGame();
+game.run();
 
-//const level = new Level(128 * 10, 128 * 10 );
-const racer = new Racer({x:333, y:302});
-
-const camera = new Camera(
-	 racer,
-	 { w, h },
-	 { w: level.w, h: level.h }
-);
-
-//scoreboard info
-const location = new Text("Location: ", {
-  font: "12px sans-serif",
-  fill: "black",
-  align: "left"
-});
-location.position.x = 5;
-location.position.y = 10;
-const tiles = new Text("Tiles: ", {
-  font: "20px sans-serif",
-  fill: "#8B8994",
-  align: "center"
-});
-tiles.position.x = w / 2;
-tiles.position.y = 60;
-	
-	
-scene.add(camera);
-camera.add(level);
-camera.add(racer);;
-//scene.add(location);
-scene.add(tiles);
-scoreboard.add(location);
-
-var position = {x:0, y:0};
-*/
 
 //this will need call backs so that the game, doesn't start until the GA has had a chance to evaluate and evolve a population.
 
@@ -83,7 +49,11 @@ var position = {x:0, y:0};
 
 function startGame() {
 	//when the ga object has things in it..then enter the game
-  game.scene = new GameScreen(game, controls, ga.genomes, newEpoch);
+	var contestants = [];
+	for (let i=0; i < ga.genomes.length; i++) {
+		contestants.push(ga.genomes[i].network);
+	}
+  game.scene = new GameScreen(game, controls, contestants, newEpoch);
 }
 function newEpoch() {
 	console.log('game over!');
@@ -93,6 +63,4 @@ function newGA() {
 	return ga.initialize();
 	//console.log(ga);
 }
-const ready = newGA();
-if (ready) startGame();
-game.run();
+

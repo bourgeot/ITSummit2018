@@ -76,14 +76,17 @@ class Genome {
 			const {
 				ID: nID, 
 				type: nType, 
+				recurrent: recurrent,//here
 				activationResponse: aR, 
 				position: nPos} = this.nodeGenes[j];
 			const node = new Neuron(
 				nID,
 				nType,
-				aR
+				recurrent,
+				aR,
+				nPos
 			);
-			node.position = nPos;
+			//node.position = nPos;
 			nodes.push(node);
 		}
 		//for each enabled connection, add the inputs and the weights

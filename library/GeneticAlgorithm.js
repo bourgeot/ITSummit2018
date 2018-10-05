@@ -42,7 +42,6 @@ class GeneticAlgorithm {
 		*/
 		var inNodes = [];
 		var outNodes = [];
-		var connections = [];
 		for (let j = 0; j < INPUT_NODES; j++) {
 			const inputNode = new NodeGene(this.nodeID, "input", false, 1.0, {x:j+1, y:0});
 			inNodes.push(inputNode);
@@ -71,33 +70,13 @@ class GeneticAlgorithm {
 			);
 			this.innovationID++;
 		}
-		for (let j = 0; j < INPUT_NODES; j++) {
-			for (let k = 0; k < OUTPUT_NODES; k++) {
-				const connection = new ConnectionGene(
-					this.innovationID,
-					inNodes[j],
-					outNodes[k],
-					1,
-					true,
-					false
-				);
-				connections.push(connection);
-				const innovation = this.innovationTable.createNewInnovation(
-					this.innovationID,
-					"new_connection",
-					connection.inNode,
-					connection.outNode,
-					-1,
-					"none"
-				);
-				this.innovationID++;
-			}
-		}
+
 		for (let i=0; i < POPULATION_SIZE; i++) {
 			//build a basic genome and randomize the connection weights
 			//NOTE: right now the weight differences are not captured in the innovation number. That is,
 			//they don't count as a distinct innovation. I am not sure at this point if that matters or not.
-			const genome = new Genome();
+			//i found out it does, because objects need to be created or the weight change will affect all instances.
+			var genome = new Genome();
 			genome.ID = this.genomeID;
 			genome.nodeGenes = inNodes.concat(outNodes);
 			genome.maxNeuron = genome.nodeGenes.length + 1;
@@ -111,12 +90,33 @@ class GeneticAlgorithm {
 				step: STEP_SIZE
 			};
 			//randomize the connection weights
-			for (let j=0; j < connections.length; j++) {
-				connections[j].connectionWeight = math.randf(-1,1);
-				genome.connectionGenes.push(connections[j]);
+			//we have to create new connection objects 
+			
+			for (let j = 0; j < INPUT_NODES; j++) {
+				for (let k = 0; k < OUTPUT_NODES; k++) {
+					const connection = new ConnectionGene(
+						this.innovationID,
+						inNodes[j],
+						outNodes[k],
+						math.randf(-1,1),
+						true,
+						false
+					);
+					genome.connectionGenes.push(connection);
+					const innovation = this.innovationTable.createNewInnovation(
+						this.innovationID,
+						"new_connection",
+						connection.inNode,
+						connection.outNode,
+						-1,
+						"none"
+					);
+					this.innovationID++;
+				}
 			}
+			
 			//now create a phenotype (a neural network) for each genome.
-			if (i==0) genome.createPhenotype();
+			if (i<5) genome.createPhenotype();
 			this.genomes.push(genome);
 			this.genomeID++;
 		}

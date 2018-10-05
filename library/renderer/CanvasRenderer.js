@@ -40,7 +40,12 @@ class CanvasRenderer {
 					if (font) ctx.font = font;
 					if (fill) ctx.fillStyle = fill;
 					if (align) ctx.textAlign = align;
-					ctx.fillText(child.text, 0, 0);
+					//if there are linefeeds, split the text and create new lines
+					let lines = child.text.split('\n');
+					let lineheight = 20; //default?
+					for (let i = 0; i<lines.length; i++) {
+						ctx.fillText(lines[i], child.position.x, child.position.y + (i * lineheight));
+					}
 				}
 				else if (child.texture) {
 					//see if it is a TileSprite and so is cropped
@@ -86,8 +91,10 @@ class CanvasRenderer {
 				}
 				else if (child.radius && child.style) {
 					ctx.beginPath();
+					ctx.fillStyle = child.style.fill;
 					ctx.arc(0,0,child.radius, child.beginTheta, child.endTheta, child.ccw);
 					ctx.stroke();
+					ctx.fill();
 				}
 				
 				//handle any children

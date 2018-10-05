@@ -3,9 +3,15 @@ import Container from "./Container.js";
 import Rectangle from "./Rectangle.js";
 import Arc from "./Arc.js";
 import math from "./utils/math.js";
+const INPUT_ICON_SIZE = 13;
+const INPUT_ICON_TYPE = "Rectangle";
+const HIDDEN_ICON_SIZE = 9;
+const HIDDEN_ICON_TYPE = "Arc";
+const OUTPUT_ICON_SIZE = 12;
+const OUTPUT_ICON_TYPE = "Arc";
 
 class Neuron extends Container {
-	constructor(ID, type, activationResponse) {
+	constructor(ID, type, recurrent, activationResponse, position) {
 		super();
 		//links coming in
 		this.inputNeurons = [];
@@ -15,20 +21,22 @@ class Neuron extends Container {
 		this.type = type;
 		this.bias = math.randf(-1, 1);
 		this.ID = ID;
+		this.recurrent = recurrent;
 		this.activationResponse = activationResponse;
 		this.icon = {};
+		this.position = position;
 		//set its representation based on its type and append it to children.
 		if (this.type == "input") {
 			//purple if it is max, green if it is in contact with a boundary
-			this.icon = new Rectangle(13, 13, {fill: "purple"});
+			this.icon = new Rectangle(INPUT_ICON_SIZE, INPUT_ICON_SIZE, {fill: "purple"});
 		}
 		else if (this.type == "hidden") {
 			//green if positive, red if negative, grey if not activated
-			this.icon = new Arc(9, {fill: "green"});
+			this.icon = new Arc(HIDDEN_ICON_SIZE, {fill: "green"});
 		}
 		else if (this.type == "output") {
 			//blue if activated, grey otherwise
-			this.icon = new Arc(12, {fill: "blue"});
+			this.icon = new Arc(OUTPUT_ICON_SIZE, {fill: "blue"});
 		}
 		this.add(this.icon);
 	}

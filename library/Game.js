@@ -22,6 +22,7 @@ class Game {
 										//gamescreen will 'own' the players, racers, scores, etc. 
 		this.scoreboard = new Container();
 		this.frontrunner = new Container();
+		this.frontrunner.size = {width: 200, height: 200};
 
 	}
 	//Methods

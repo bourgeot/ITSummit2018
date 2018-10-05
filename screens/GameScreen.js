@@ -5,6 +5,7 @@ import Racer from "../src/entities/Racer.js";
 import math from "../library/utils/math.js";
 import Text from "../library/Text.js";
 import entity from "../library/utils/entity.js";
+import NetworkMap from "../library/NetworkMap.js";
 
 const CONDITION_CLEAR = 0;
 const CONDITION_WARNING = 1;
@@ -23,10 +24,11 @@ class GameScreen extends Container {
 		this.controls = controls;
 		this.onGameOver = onGameOver;
 		const { scoreboard, scene, frontrunner, w, h } = game;
-
+			
+			//console.log(contestants[0].neurons);
 
 		const map = new Level(128*10, 128*10);
-		const racer = new Racer({x:333, y:302});
+		const racer = new Racer({x:333, y:302}, controls);
 		const leadRacer = racer;
 
 		this.map = map;
@@ -46,7 +48,9 @@ class GameScreen extends Container {
 		  align: "left"
 		});
 		location.position.x = 5;
-		location.position.y = 10;
+		location.position.y = 0;
+		
+		/*
 		const tiles = new Text("Tiles: ", {
 		  font: "20px sans-serif",
 		  fill: "#8B8994",
@@ -54,14 +58,20 @@ class GameScreen extends Container {
 		});
 		tiles.position.x = w / 2;
 		tiles.position.y = 60;
+		*/	
+		for(let i=0; i < contestants.length; i++) {
 			
-			
+		}
 		this.add(this.camera);
 		this.camera.add(this.map);
-		this.camera.add(this.racer);;
+		this.camera.add(this.racer);
 		//scene.add(location);
-		this.add(tiles);
-		scoreboard.add(location);
+		//this.add(tiles);
+		this.location = scoreboard.add(location);
+		//calculate the layout of the neural network. 
+		const nm = new NetworkMap(contestants[0], frontrunner.size.width, frontrunner.size.height);
+		frontrunner.add(nm);
+		
 
 		var position = {x:0, y:0};
 	
@@ -81,7 +91,7 @@ class GameScreen extends Container {
 		var currentTiles = [];
 		var positions = [];
 		const racerPos = this.racer.position;
-		location.text = "";
+		this.location.text = "";
 		//console.log(racer.whiskerLocation(0));
 		if(this.racer.alive) {
 			for (i=0; i < this.racer.whiskers.children.length; i++) {
@@ -90,7 +100,7 @@ class GameScreen extends Container {
 				currentTile = this.map.tileAtPixelPos(position);
 				//get the current length;
 				r = this.racer.whiskers.children[i].length;
-				location.text += "Whisker " + i + ": " + Math.floor(r) + "\n";
+				this.location.text += "Whisker " + i + ": " + Math.floor(r) + "\n";
 				//console.log(r);
 				for (j = 0; j < 2; j++) {
 					if (j > 0) {

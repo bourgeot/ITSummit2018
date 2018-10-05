@@ -19,6 +19,17 @@ class Container {
 			}
 		});
 	}
+	length() {
+		return this.children.length;
+	}
+	element(e) {
+		if(this.children[e] !== null) {
+			return this.children[e];
+		}
+		else {
+			return null;
+		}
+	}
 	map(f) {
 		return this.children.map(f);
 	}

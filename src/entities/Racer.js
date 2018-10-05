@@ -2,7 +2,7 @@ import Sprite from "../../library/Sprite.js";
 //import TileSprite from "../../library/TileSprite.js";
 import Texture from "../../library/Texture.js";
 import Container from "../../library/Container.js";
-import KeyControls from "../../library/controls/KeyControls.js";
+//import KeyControls from "../../library/controls/KeyControls.js";
 import Vector from "../../library/utils/Vector.js"
 import math from "../../library/utils/math.js";
 import Rectangle from "../../library/Rectangle.js";
@@ -11,6 +11,8 @@ const CONDITION_CLEAR = 0;
 const CONDITION_WARNING = 1;
 const CONDITION_FATAL = 2;
 const maxSpeed = 1000;
+const MAX_SPEED = 1000;
+const MAX_ROTATION = Math.PI/2;
 const maxAcc = 300;
 const maxBrake = 600;
 const maxTheta = Math.PI/4;
@@ -22,19 +24,20 @@ const FATAL_CAR = new Texture("./res/Images/PNG/Cars/car_red_small_1.png");
 //make a segment data structure defined by two sets of points. Alternately an origin, an angle, and a length
 //a whisker will be a segment with a sprite at the origin and a sprite length away at angle, with an optional style
 
-///179
+///so each update the racer will  process output actions from the controls and then, after, it will send its updated whisker data to the controls
 
 
 class Racer extends Container {
-	constructor(startPosition) {
+	constructor(startPosition, controller) {
 		super();
 		this.alive = true;
 		this.position = new Vector(startPosition.x, startPosition.y);
 		this.velocity = new Vector(0,0);
 		this.speed = 0;
 		this.theta = 0;
-		this.rotation = 0;
-		this.controls = new KeyControls();
+		this.heading = 0;
+		//this.controls = new KeyControls();
+		this.controller = controller;
 		this.pivot = new Vector(0, 0);
 		this.pLength = this.pivot.magnitude();
 
@@ -89,24 +92,25 @@ class Racer extends Container {
 		//v.rotate(this.theta);
 		return {x: Math.round(h.x), y: Math.round(h.y), theta: this.theta};
 	}
+	
 	update(dt, t) {
 		if(this.alive) {
 			var dTheta = 0;
 			//if up arrow is pressed
-			if (this.controls.y == -1 ) {
+			if (this.controller.y == -1 ) {
 				this.speed += maxAcc * dt;
 			}
 			//if space is pressed
-			if (this.controls.action) {
+			if (this.controller.action) {
 				this.speed -= maxBrake * dt;
 			}
 			this.speed = math.clamp(this.speed, 0, maxSpeed);
 			//if right arrow is pressed
-			if (this.controls.x == 1) {
+			if (this.controller.x == 1) {
 				//there is a clockwise rotation
 				dTheta = maxTurnSpeed * dt;
 			}
-			if (this.controls.x == -1) {
+			if (this.controller.x == -1) {
 				//there is a counter clockwise rotation
 				 dTheta = - maxTurnSpeed * dt;
 			}
@@ -122,6 +126,39 @@ class Racer extends Container {
 			//const deltaR = 0;
 		}
 	}
+	/*
+	update(dt, t) {
+		//NN controls will be from two neurons. one for the angle, and one for the speed, each from zero to 1
+		//where the measure of the angle of the wheel is Theta = (neuronOut * Math.PI /2) - Math.PI/4, and 
+		//the speed is neuronOut * maxSpeed
+		//this.controller.outputActions[0] will contain the speed, and this.controller.outputActions[1] will contain the angle
+		
+		//following the update of the position and direction of the car, update the fitness function. Then,
+		//each of the new whisker values will be loaded into the inputSensors
+		//array of the controller.
+		//x = vt
+		if (this.alive) {
+			this.speed = this.controller.outputActions[0] * MAX_SPEED;
+			this.heading += this.controller.outputActions[1] * MAX_ROTATION - Math.PI/4;
+			this.heading = this.heading % Math.PI * 2;
+			if (this.speed * dt > .00001) {
+				const deltaP = {
+					x: Math.floor(this.speed * dt * Math.cos(this.heading)),
+					y: Math.floor(this.speed * dt * Math.sin(this.heading))
+				};
+				this.position.x += deltaP.x;
+				this.position.y += deltaP.y;
+			
+				this.controller.fitness += deltaP.x * deltaP.x + deltaP.y * deltaP.y;
+			}
+			//now update the sensor values of the controller's input array
+			for (let i=0; i < this.whiskers.length; i++) {
+				this.controller.inputActions[i] = this.whiskers.element(i);
+			}
+		}
+		
+	}
+	*/
 }
 
 export default Racer;

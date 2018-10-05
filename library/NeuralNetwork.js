@@ -14,7 +14,8 @@ class NeuralNetwork extends Container {
 		this.connections = connections;
 		this.inputSensors = [];
 		this.outputActions = [];
-
+		this.fitness = 0;
+		
 		
 	}
 	
