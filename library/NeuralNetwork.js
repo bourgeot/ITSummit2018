@@ -12,20 +12,32 @@ class NeuralNetwork extends Container {
 		super();
 		this.neurons = neurons;
 		this.connections = connections;
-		this.inputSensors = [];
-		this.outputActions = [];
+		this.inputSensors = [0, 0, 0, 0, 0];
+		this.outputActions = [0, .5];
 		this.fitness = 0;
 		
 		
 	}
 	
 	update(deltaT, t) {
+		for (let i=0; i < this.outputActions.length-1; i++) {
+			if(this.outputActions[i]  >.5) {
+				this.outputActions[i] -= .001;
+			}
+			else if (this.outputActions[i] < .44 ) {
+		
+				this.outputActions[i] += 0.001;
+			}
+		}
+		/*
 		for (let j=0; j < this.neurons.length; j++) {
 			this.neurons[j].calculateOutput();
 			if (this.neurons[j].type == "output") {
-				this.outputActions.push(this.neurons[j].output);
+				//this won't work. need to assign which neuron controls which thing
+				this.outputActions[j] = this.neurons[j].output;
 			}
 		}
+		*/
 	}
 }
 export default NeuralNetwork;

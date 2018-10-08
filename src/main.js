@@ -37,7 +37,8 @@ const FATAL_DISTANCE = 25;
 */
 const game = new Game(640, 480, '#gameBoard' );
 const ga = new GeneticAlgorithm();
-const controls = new KeyControls();
+//const controls = new KeyControls();
+
 const ready = newGA();
 if (ready) startGame();
 game.run();
@@ -53,7 +54,8 @@ function startGame() {
 	for (let i=0; i < ga.genomes.length; i++) {
 		contestants.push(ga.genomes[i].network);
 	}
-  game.scene = new GameScreen(game, controls, contestants, newEpoch);
+  //game.scene = new GameScreen(game, controls, contestants, newEpoch);
+  game.scene = new GameScreen(game, contestants, newEpoch);
 }
 function newEpoch() {
 	console.log('game over!');

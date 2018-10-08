@@ -92,7 +92,7 @@ class Racer extends Container {
 		//v.rotate(this.theta);
 		return {x: Math.round(h.x), y: Math.round(h.y), theta: this.theta};
 	}
-	
+	/*
 	update(dt, t) {
 		if(this.alive) {
 			var dTheta = 0;
@@ -126,7 +126,7 @@ class Racer extends Container {
 			//const deltaR = 0;
 		}
 	}
-	/*
+	*/
 	update(dt, t) {
 		//NN controls will be from two neurons. one for the angle, and one for the speed, each from zero to 1
 		//where the measure of the angle of the wheel is Theta = (neuronOut * Math.PI /2) - Math.PI/4, and 
@@ -153,12 +153,12 @@ class Racer extends Container {
 			}
 			//now update the sensor values of the controller's input array
 			for (let i=0; i < this.whiskers.length; i++) {
-				this.controller.inputActions[i] = this.whiskers.element(i);
+				this.controller.inputSensors[i] = this.whiskers.element(i);
 			}
 		}
 		
 	}
-	*/
+	
 }
 
 export default Racer;

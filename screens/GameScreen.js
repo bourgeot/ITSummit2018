@@ -15,20 +15,20 @@ const FATAL_DISTANCE = 25;
 
 //level player racer
 class GameScreen extends Container {
-	constructor(game, controls, contestants, onGameOver) {
+	constructor(game, contestants, onGameOver) {
 		super();
 		//initialization
 		this.contestants = contestants;
 		this.w = game.w;
 		this.h = game.h;
-		this.controls = controls;
+		this.controls = contestants[0];
 		this.onGameOver = onGameOver;
 		const { scoreboard, scene, frontrunner, w, h } = game;
 			
 			//console.log(contestants[0].neurons);
 
 		const map = new Level(128*10, 128*10);
-		const racer = new Racer({x:333, y:302}, controls);
+		const racer = new Racer({x:333, y:302}, contestants[0]);
 		const leadRacer = racer;
 
 		this.map = map;
@@ -65,6 +65,7 @@ class GameScreen extends Container {
 		this.add(this.camera);
 		this.camera.add(this.map);
 		this.camera.add(this.racer);
+		this.add(this.contestants[0]);
 		//scene.add(location);
 		//this.add(tiles);
 		this.location = scoreboard.add(location);
@@ -91,9 +92,10 @@ class GameScreen extends Container {
 		var currentTiles = [];
 		var positions = [];
 		const racerPos = this.racer.position;
-		this.location.text = "";
+
 		//console.log(racer.whiskerLocation(0));
 		if(this.racer.alive) {
+			this.location.text = "";
 			for (i=0; i < this.racer.whiskers.children.length; i++) {
 				position = {x: Math.round(racerPos.x + this.racer.whiskerLocation(i).x),
 					y:Math.round(racerPos.y + this.racer.whiskerLocation(i).y)};
@@ -150,6 +152,11 @@ class GameScreen extends Container {
 			if(whiskerHits <= 0) {
 					this.racer.setCondition(CONDITION_CLEAR);
 			}
+			this.location.text += "Speed: " + this.racer.controller.outputActions[0].toFixed(4) + "/" + 
+				this.racer.speed.toFixed(0) + "\n";
+			this.location.text += "Heading: " + this.racer.controller.outputActions[1].toFixed(4) + "/" +
+				this.racer.heading.toFixed(4) + "\n";
+			this.location.text += "Fitness: " + this.racer.controller.fitness;
 		}
   //find out where the player is and add the tiles to the screen
   
