@@ -42,7 +42,7 @@ const ga = new GeneticAlgorithm();
 const ready = newGA();
 if (ready) startGame();
 game.run();
-
+//if (ready) console.log(ready);
 
 //this will need call backs so that the game, doesn't start until the GA has had a chance to evaluate and evolve a population.
 

@@ -12,17 +12,10 @@ class ConnectionGene {
 		this.enabled = enabled;
 		this.recurrent = recurrent;
 	}
-	static from (g) {
-		return new ConnectionGene().copy(g);
-	}
-	copy({ID, inNode, outNode, connectionWeight, enabled, recurrent}) {
-		this.inNode = inNode;
-		this.outNode = outNode;
-		this.connectionWeight = connectionWeight;
-		this.enabled = enabled;
-		this.recurrent = recurrent;
-		this.ID = ID;
-		return this;
+
+	copy() {
+		var g = new ConnectionGene(this.ID, this.inNode, this.outNode, this.connectionWeight, this.enabled, this.recurrent);
+		return g;
 	}
 	
 }

@@ -12,7 +12,7 @@ class Whisker extends Container {
 		this.id = id;
 		this.fatalDistance = fatalDistance;
 		this.theta = theta;
-		this.MAX_LENGTH = r;
+		this.maxLength = r;
 		this.length = r;
 		this.position = new Vector(origin[0], origin[1]);
 		this.end = this.position.clone().add({x:Math.round(r * Math.cos(this.theta)), y:Math.round(r * Math.sin(this.theta))});
@@ -33,8 +33,8 @@ class Whisker extends Container {
 		this.end.set(point);
 		this.endSprite.position = this.end;
 	}
-	setLength(r = this.MAX_LENGTH) {
-		this.length = math.clamp(r, 20, this.MAX_LENGTH);
+	setLength(r = this.maxLength) {
+		this.length = math.clamp(r, 20, this.maxLength);
 		const rx = r * Math.cos(this.theta);
 		const ry = r * Math.sin(this.theta) 
 		this.end.set(rx, ry);

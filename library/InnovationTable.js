@@ -12,22 +12,35 @@ class InnovationTable {
 		this.innovations = [];
 
 	}
-	createNewInnovation(innovationID, type, inNode, outNode, nodeID, nodeType) {
+	createNewInnovation(innovationID, type, inNodeID, outNodeID, nodeID, nodeType) {
 		var record;
 		record = new InnovationRecord(
 			innovationID,
 			type,
-			inNode,
-			outNode,
+			inNodeID,
+			outNodeID,
 			nodeID,
 			nodeType
 		);					
 		this.innovations.push(record);
-		return innovationID;
+		this.GeneticAlgorithm.innovationID++;
+		return record;
 	}
-	findInnovation(parameters) {
-		//I don't know yet
+	findInnovation(type, inNodeID = -1, outNodeID = -1, nodeType = "none") {
 		//return the id if it is found, otherwise return -1;
+		var found = {innovationID: -1};
+		for (let i=0; i < this.innovations.length; i++) {
+			let inn = this.innovations[i];
+			//neuron
+			if(	inn.type == type &&
+					inn.nodeType == nodeType &&
+					inn.inNodeID == inNodeID &&
+					inn.outNodeID == outNodeID) {
+				found = inn;
+				break;
+			}
+		}
+		return found;
 	}
 
 }

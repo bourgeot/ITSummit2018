@@ -1,9 +1,9 @@
 class InnovationRecord {
-	constructor(innovationID, type, inputNode, outputNode, nodeID, nodeType) {
+	constructor(innovationID, type, inputNodeID, outputNodeID, nodeID, nodeType) {
 		this.innovationID = innovationID;
 		this.type = type;
-		this.inputNode = inputNode;
-		this.outputNode = outputNode;
+		this.inputNodeID = inputNodeID;
+		this.outputNodeID = outputNodeID;
 		this.nodeID = nodeID;
 		this.nodeType = nodeType;
 	}

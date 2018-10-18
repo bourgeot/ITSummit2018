@@ -2,16 +2,37 @@
 const POPULATION_SIZE = 20;
 const INPUT_NODES = 5;
 const OUTPUT_NODES = 2;
-const PRETURBATION_CHANCE = 0;
-const WEIGHT_REPLACEMENT_CHANCE = 0;
+const PRETURBATION_CHANCE = 0.5;
+const WEIGHT_REPLACEMENT_CHANCE = 0.1;
 const CROSSOVER_CHANCE = 0.75;
-const MUTATE_CONNECTIONS_CHANCE = 0;
-const LINK_MUTATION_CHANCE = 0;
+const MUTATE_CONNECTIONS_CHANCE = 0.3;
+const LINK_MUTATION_CHANCE = 0.17;
 const BIAS_MUTATION_CHANCE = 0;
-const NODE_MUTATION_CHANCE = 0;
+const NODE_MUTATION_CHANCE = 0.14;
 const ENABLE_MUTATION_CHANCE = 0;
 const DISABLE_MUTATION_CHANCE = 0;
 const STEP_SIZE  = 0;
+/*
+iNumAddLinkAttempts 5
+dSurvivalRate 0.2
+iNumGensAllowedNoImprovement 15
+iMaxPermittedNeurons 100
+dChanceAddLink 0.17
+dChanceAddNode	0.14
+dChanceAddRecurrentLink 0.05
+dMutationRate 0.3
+dMaxWeightPerturbation 0.5
+dProbabilityWeightReplaced 0.1
+dActivationMutationRate 0.1
+dMaxActivationPerturbation 0.1
+dCompatibilityThreshold 0.26
+iOldAgeThreshold 50
+dOldAgePenalty 0.7
+dYoungFitnessBonus 1.4
+iYoungBonusAgeThreshhold 10
+dCrossoverRate 0.7
+
+*/
 
 //include block
 import InnovationTable from "./InnovationTable.js";
@@ -46,7 +67,7 @@ class GeneticAlgorithm {
 			const inputNode = new NodeGene(this.nodeID, "input", false, 1.0, {x:j+1, y:0});
 			inNodes.push(inputNode);
 			this.nodeID++;
-			const innovation = this.innovationTable.createNewInnovation(
+			this.innovationTable.createNewInnovation(
 				this.innovationID,
 				"new_node",
 				-1,
@@ -60,7 +81,7 @@ class GeneticAlgorithm {
 			const outputNode = new NodeGene(this.nodeID, "output", false, 1.0, {x:j+1, y:1});
 			outNodes.push(outputNode);
 			this.nodeID++;
-			const innovation = this.innovationTable.createNewInnovation(
+			this.innovationTable.createNewInnovation(
 				this.innovationID,
 				"new_node",
 				-1,
@@ -70,7 +91,59 @@ class GeneticAlgorithm {
 			);
 			this.innovationID++;
 		}
+		var genome = new Genome(this.genomeID, this);
+		genome.nodeGenes = inNodes.concat(outNodes);
+		genome.maxNeuron = genome.nodeGenes.length + 1;
+		genome.mutationRates = {
+			connections: MUTATE_CONNECTIONS_CHANCE,
+			link: LINK_MUTATION_CHANCE,
+			bias: BIAS_MUTATION_CHANCE,
+			node: NODE_MUTATION_CHANCE,
+			enable: ENABLE_MUTATION_CHANCE,
+			disable: DISABLE_MUTATION_CHANCE,
+			step: STEP_SIZE
+		};
+		for (let j = 0; j < INPUT_NODES; j++) {
+			for (let k = 0; k < OUTPUT_NODES; k++) {
+				const connection = new ConnectionGene(
+					this.innovationID,
+					inNodes[j],
+					outNodes[k],
+					math.randf(-1,1),
+					true,
+					false
+				);
+				genome.connectionGenes.push(connection);
+				this.innovationTable.createNewInnovation(
+					this.innovationID,
+					"new_connection",
+					connection.inNode.ID,
+					connection.outNode.ID,
+					-1,
+					"none"
+				);
+				this.innovationID++;
+			}
+		}
+		genome.createPhenotype();
+		this.genomes.push(genome);
+		//Now from this master create copies with random connection weights.
+		for (let i=1; i<POPULATION_SIZE; i++) {
+			this.genomeID++;
+			const g2 = genome.copy(this.genomeID);
+			for (let j = 0; j < g2.connectionGenes.length; j++){
+				g2.connectionGenes[j].connectionWeight = math.randf(-1,1);
+			}
+			//test
+			g2.addNode();
+			g2.deletePhenotype();
+			g2.createPhenotype();
+			this.genomes.push(g2);
+		}
 
+		
+		
+		/*
 		for (let i=0; i < POPULATION_SIZE; i++) {
 			//build a basic genome and randomize the connection weights
 			//NOTE: right now the weight differences are not captured in the innovation number. That is,
@@ -114,12 +187,13 @@ class GeneticAlgorithm {
 					this.innovationID++;
 				}
 			}
-			
+
 			//now create a phenotype (a neural network) for each genome.
 			if (i<5) genome.createPhenotype();
 			this.genomes.push(genome);
 			this.genomeID++;
 		}
+		*/
 		return this;
 	}
 	epoch() {

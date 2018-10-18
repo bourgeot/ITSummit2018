@@ -28,7 +28,7 @@ const FATAL_CAR = new Texture("./res/Images/PNG/Cars/car_red_small_1.png");
 
 
 class Racer extends Container {
-	constructor(startPosition, controller) {
+	constructor(startPosition, controller, maxWhiskerLength) {
 		super();
 		this.alive = true;
 		this.position = new Vector(startPosition.x, startPosition.y);
@@ -62,7 +62,7 @@ class Racer extends Container {
 				k+2,
 				fatalDistance[k+2],
 				origin,
-				100,
+				maxWhiskerLength,
 				k * Math.PI/8,
 				new Sprite(new Texture("./res/crosshairs/PNG/White/crosshair001.png")),
 				new Sprite(new Texture("./res/crosshairs/PNG/White/crosshair001.png")));

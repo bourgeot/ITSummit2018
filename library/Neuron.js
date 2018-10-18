@@ -9,6 +9,7 @@ const HIDDEN_ICON_SIZE = 9;
 const HIDDEN_ICON_TYPE = "Arc";
 const OUTPUT_ICON_SIZE = 12;
 const OUTPUT_ICON_TYPE = "Arc";
+const MAX_INPUT_VALUE = 100;
 
 class Neuron extends Container {
 	constructor(ID, type, recurrent, activationResponse, position) {
@@ -28,6 +29,7 @@ class Neuron extends Container {
 		//set its representation based on its type and append it to children.
 		if (this.type == "input") {
 			//purple if it is max, green if it is in contact with a boundary
+			
 			this.icon = new Rectangle(INPUT_ICON_SIZE, INPUT_ICON_SIZE, {fill: "purple"});
 		}
 		else if (this.type == "hidden") {

@@ -12,17 +12,16 @@ class NodeGene {
 		this.activationResponse = activationResponse;
 		this.position = position;
 
-		}
-	static from (g) {
-		return new NodeGene().copy(g);
 	}
-	copy({ID, type, recurrent, activationResponse, position}) {
-		this.ID = ID;
-		this.type = type;
-		this.recurrent = recurrent;
-		this.activationResponse = activationResponse;
-		this.position = position;
-		return this;
+	copy() {
+		var g = new NodeGene(
+			this.ID,
+			this.type,
+			this.recurrent,
+			this.activationResponse,
+			this.position
+		);
+		return g;
 	}
 	
 }

@@ -11,7 +11,7 @@ const CONDITION_CLEAR = 0;
 const CONDITION_WARNING = 1;
 const CONDITION_FATAL = 2;
 const FATAL_DISTANCE = 25;
-
+const MAX_WHISKER_LENGTH = 100;
 
 //level player racer
 class GameScreen extends Container {
@@ -19,16 +19,17 @@ class GameScreen extends Container {
 		super();
 		//initialization
 		this.contestants = contestants;
+		console.log(contestants);
 		this.w = game.w;
 		this.h = game.h;
-		this.controls = contestants[0];
+		this.controls = contestants[9];
 		this.onGameOver = onGameOver;
 		const { scoreboard, scene, frontrunner, w, h } = game;
 			
 			//console.log(contestants[0].neurons);
 
 		const map = new Level(128*10, 128*10);
-		const racer = new Racer({x:333, y:302}, contestants[0]);
+		const racer = new Racer({x:333, y:302}, this.controls, MAX_WHISKER_LENGTH);
 		const leadRacer = racer;
 
 		this.map = map;
@@ -65,12 +66,12 @@ class GameScreen extends Container {
 		this.add(this.camera);
 		this.camera.add(this.map);
 		this.camera.add(this.racer);
-		this.add(this.contestants[0]);
+		this.add(this.controls);
 		//scene.add(location);
 		//this.add(tiles);
 		this.location = scoreboard.add(location);
 		//calculate the layout of the neural network. 
-		const nm = new NetworkMap(contestants[0], frontrunner.size.width, frontrunner.size.height);
+		const nm = new NetworkMap(this.controls, frontrunner.size.width, frontrunner.size.height);
 		frontrunner.add(nm);
 		
 
