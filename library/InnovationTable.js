@@ -31,13 +31,19 @@ class InnovationTable {
 		var found = {innovationID: -1};
 		for (let i=0; i < this.innovations.length; i++) {
 			let inn = this.innovations[i];
-			//neuron
+			/*
+			if (type == 'new_connection') {
+				console.log(inn);
+				console.log(type, inNodeID, outNodeID, nodeType);
+			}
+			*/			
 			if(	inn.type == type &&
-					inn.nodeType == nodeType &&
-					inn.inNodeID == inNodeID &&
-					inn.outNodeID == outNodeID) {
+				inn.nodeType == nodeType	 &&
+					inn.inputNodeID == inNodeID &&
+					inn.outputNodeID == outNodeID) {
 				found = inn;
 				break;
+				//i=this.innovations.length;
 			}
 		}
 		return found;

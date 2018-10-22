@@ -20,6 +20,7 @@
 
 
 import GameScreen from "../screens/GameScreen.js";
+import EvolutionScreen from "../screens/EvolutionScreen.js";
 import library from "../library/index.js";
 //import Racer from "./entities/Racer.js";
 import KeyControls from "../library/controls/KeyControls.js";
@@ -40,7 +41,12 @@ const ga = new GeneticAlgorithm();
 //const controls = new KeyControls();
 
 const ready = newGA();
-if (ready) startGame();
+
+
+if (ready) {
+	//compatibilityScore(ready.genomes[0], ready.genomes[1]);
+	startGame();
+}
 game.run();
 //if (ready) console.log(ready);
 
@@ -57,12 +63,47 @@ function startGame() {
   //game.scene = new GameScreen(game, controls, contestants, newEpoch);
   game.scene = new GameScreen(game, contestants, newEpoch);
 }
-function newEpoch() {
-	console.log('game over!');
+function newEpoch(population) {
+	//alert(population.map(a => a.fitness).toString());
+	//alert(scores.toString());
+	ga.epoch(population);
 }
 function newGA() {
 	//spawn a new world and create neural networks!
 	return ga.initialize();
 	//console.log(ga);
 }
-
+function	compatibilityScore(genome1, genome2) {
+		//this measures the genetic distance between two genomes, and is used to determine
+		//whether or not they are part of the same species.
+		let g1IDs = genome1.connectionGenes.map(obj=>obj.ID).sort();
+		let g2IDs = genome2.connectionGenes.map(obj=> obj.ID).sort();
+		console.log(g1IDs);
+		console.log(g2IDs);
+		let weightDifference = 0;
+		
+		let matched = 0;
+		//excess is the length difference.
+		let excess = Math.abs(g1IDs.length - g2IDs.length);
+		let longest = Math.max(g1IDs.length, g2IDs.length);
+		let disjoint = 0;
+		for(let i=0; i<g1IDs.length; i++) {
+			let noMatch = true;
+			for (let j=0; j<g2IDs.length; j++) {
+				if (g1IDs[i] == g2IDs[j]) {
+					matched++;
+					noMatch = false;
+					weightDifference += Math.abs(genome1.connectionGenes[i].connectionWeight - genome2.connectionGenes[j].connectionWeight);
+					//splice the array to remove the matched element
+					g2IDs.splice(j, 1);
+					break;
+				}
+			}
+			if(noMatch) {
+				disjoint++;
+			}
+		}
+		//because we spliced the array we know the remaining elements are disjoint.
+		disjoint += g2IDs.length;
+		console.log(matched, excess, longest, disjoint, weightDifference);
+	}

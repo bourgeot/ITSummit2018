@@ -51,6 +51,8 @@ class NetworkMap extends Container {
 			else {
 				hiddenCtr++;
 				//more to come here
+				console.log('hidden added to map');
+				console.log(network.neurons[i]);
 			}
 			this.add(network.neurons[i]);
 		}

@@ -198,80 +198,99 @@ class Genome {
 		}
 	}
 	addConnection (GeneticAlgorithm) {
+	//just return dependent on the mutation rate
 		if (Math.random() > this.mutationRates.connections) {
 			return;
 		}
-	//just return dependent on the mutation rate
-
-	//define holders for the two neurons to be linked. If we have find two 
-	//valid neurons to link these values will become >= 0.
-
-	//flag set if a recurrent link is selected (looped or normal)
-
-	//first test to see if an attempt shpould be made to create a 
-	//link that loops back into the same neuron
-
-	//YES: try NumTrysToFindLoop times to find a neuron that is not an
-		//input or bias neuron and that does not already have a loopback
-		//connection
-
-		//grab a random neuron
-
-		
-			//check to make sure the neuron does not already have a loopback 
-
-
-			//No: try to find two unlinked neurons. Make NumTrysToAddLink
-		//attempts
-
-		//choose two neurons, the second must not be an input or a bias
-
-		//make sure these two are not already linked and that they are
-			//not the same neuron
-
-			
-	//return if unsuccessful in finding a link
-
-	
-	//check to see if we have already created this innovation
-
-	
-	//is this link recurrent?
-
-	//we need to create a new innovation
-
-	
-		//then create the new gene
-
-
-		//the innovation has already been created so all we need to
-		//do is create the new gene using the existing innovation ID
-		//determine the kind of connection (loopback, recurrent, or forward)
-		
-		for (let j = 0; j < INPUT_NODES; j++) {
-			for (let k = 0; k < OUTPUT_NODES; k++) {
-				const connection = new ConnectionGene(
-					this.innovationID,
-					inNodes[j],
-					outNodes[k],
-					math.randf(-1,1),
-					true,
-					false
-				);
-				genome.connectionGenes.push(connection);
-				const innovation = this.innovationTable.createNewInnovation(
-					this.innovationID,
-					"new_connection",
-					connection.inNode,
-					connection.outNode,
-					-1,
-					"none"
-				);
-				this.innovationID++;
+		for (let i=0; i < MAX_CONNECTION_ATTEMPTS; i++) {
+			let candidates = this.nodeGenes.filter(obj => obj.type != 'bias');
+			let node1 = candidates[math.rand(0, candidates.length - 1)];
+			let candidates2 = candidates.filter(obj => obj.type != 'input');
+			let node2 = candidates2[math.rand(0, candidates2.length - 1)];
+			//console.log(candidates);
+			//console.log(node1);
+			//console.log(candidates2);
+			//console.log(node2);
+			//note: these two candidates could be the same neuron. This will create a loopback.
+			//Search the innovation database to find out if this connection has been discovered before
+			//if it has not, then it has not also occurred in this particular genome so we don't have to
+			//check that. Otherwise we do.
+			let inno = this.GeneticAlgorithm.innovationTable.findInnovation(
+			  "new_connection", 
+			  node1.ID,
+			  node2.ID,
+			  "none");
+			//console.log(this.GeneticAlgorithm.innovationTable);
+			//console.log(inno);
+			if (inno.innovationID == -1) {
+				//check the other direction
+				inno = this.GeneticAlgorithm.innovationTable.findInnovation(
+				  "new_connection",
+				  node2.ID,
+				  node1.ID,
+				  "none");
+				  //console.log('did not find ' + node1.ID + '->' + node2.ID);
+				if (inno.innovationID == -1) {
+					//not present in either direction.
+					//console.log('did not find ' + node2.ID + '->' + node1.ID);
+					const connection = new ConnectionGene(
+					  this.GeneticAlgorithm.innovationID,
+					  node1,
+					  node2,
+					  math.randf(-1,1),
+					  true,
+					  false
+					);
+					this.connectionGenes.push(connection);
+					const innovation = this.GeneticAlgorithm.innovationTable.createNewInnovation(
+					  this.GeneticAlgorithm.innovationID,
+					  "new_connection",
+					  node1.ID,
+					  node2.ID,
+					  -1,
+					  "none"
+					);
+					//since an innovation has been added don't retry
+					i = MAX_CONNECTION_ATTEMPTS;
+					//console.log('added connection: ' +  + node1.ID + '->' + node2.ID);
+				}
+				else {
+					//it was found in the other direction, so the neutrons are already connected so try again.
+					//break;
+				}
+			}
+			else {
+				//search the connection genes in this genome to make sure these two neurons aren't already connected here.
+				//if they aren't, make a new gene with the discovered innovationID
+				let connectionFound = false;
+				//console.log('found innovation: '  + node1.ID + '->' + node2.ID);
+				for(let j=0; j < this.connectionGenes.length; j++) {
+					if(this.connectionGenes[j].inNode.ID == node1.ID && this.connectionGenes[j].outNode.ID == node2.ID) {
+						//found it
+						connectionFound = true;
+						//console.log('found in genome: '  + node1.ID + '->' + node2.ID);
+						if(this.connectionGenes[j].enabled != true) {
+							this.connectionGenes[j].enabled = true;
+						}
+						//break;
+					}
+				}
+				if (!connectionFound) {
+					//add it
+					const connection = new ConnectionGene(
+					  inno.innovationID,
+					  node1,
+					  node2,
+					  math.randf(-1,1),
+					  true,
+					  false
+					);
+					this.connectionGenes.push(connection);
+				    //console.log('found innovation but not in genome: '  + node1.ID + '->' + node2.ID);
+					//console.log('added connection: ' + node1.ID + '->' + node2.ID);
+				}
 			}
 		}
-
-		//
 		
 	}
 	mutateWeights () {
@@ -280,8 +299,25 @@ class Genome {
 	mutateActivationResponse () {
 		
 	}
-	compatibilityScore () {
-		
+
+	crossover (mother, father) {
+		// choose the parent with the highest fitness or pick one at random
+		let fittest = mother;
+		if (mother.fitness == father.fitness) {
+			if (Math.random() > 0.49999) {
+				fittest = father;
+			}
+		}
+		else {
+			if(mother.fitness < father.fitness) {
+				fittest = father;
+			}
+		}
+		let momGenes = mother.connectionGenes.sort((a, b) => a.ID < b.ID);
+		let dadGenes = father.connectionGenes.sort((a, b) => a.ID < b.ID);
+		console.log(g1IDs);
+		console.log(g2IDs);
+
 	}
 	createPhenotype () {
 		//instantiate a neural network based on the node and connection genes.
@@ -308,6 +344,7 @@ class Genome {
 			//node.position = nPos;
 			nodes.push(node);
 		}
+		//console.log(this.connectionGenes);
 		//for each enabled connection, add the inputs and the weights
 		for (let j = 0; j < this.connectionGenes.length; j++) {
 			if (this.connectionGenes[j].enabled) {
@@ -339,6 +376,7 @@ class Genome {
 	sortGenes () {
 		
 	}
+	
 
 }
 export default Genome;

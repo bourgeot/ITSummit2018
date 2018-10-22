@@ -8,9 +8,13 @@ const CROSSOVER_CHANCE = 0.75;
 const MUTATE_CONNECTIONS_CHANCE = 0.3;
 const LINK_MUTATION_CHANCE = 0.17;
 const BIAS_MUTATION_CHANCE = 0;
-const NODE_MUTATION_CHANCE = 0.14;
+const NODE_MUTATION_CHANCE = 0.514;
 const ENABLE_MUTATION_CHANCE = 0;
 const DISABLE_MUTATION_CHANCE = 0;
+
+const COMPATIBILITY_THRESHOLD = 0.26;
+
+
 const STEP_SIZE  = 0;
 /*
 iNumAddLinkAttempts 5
@@ -75,7 +79,7 @@ class GeneticAlgorithm {
 				inputNode.ID,
 				inputNode.type
 			);
-			this.innovationID++;
+			//this.innovationID++;
 		}
 		for (let j = 0; j < OUTPUT_NODES; j++) {
 			const outputNode = new NodeGene(this.nodeID, "output", false, 1.0, {x:j+1, y:1});
@@ -89,7 +93,7 @@ class GeneticAlgorithm {
 				outputNode.ID,
 				outputNode.type
 			);
-			this.innovationID++;
+			//this.innovationID++;
 		}
 		var genome = new Genome(this.genomeID, this);
 		genome.nodeGenes = inNodes.concat(outNodes);
@@ -122,7 +126,7 @@ class GeneticAlgorithm {
 					-1,
 					"none"
 				);
-				this.innovationID++;
+				//this.innovationID++;
 			}
 		}
 		genome.createPhenotype();
@@ -136,68 +140,18 @@ class GeneticAlgorithm {
 			}
 			//test
 			g2.addNode();
+			g2.addConnection();
 			g2.deletePhenotype();
 			g2.createPhenotype();
 			this.genomes.push(g2);
 		}
-
-		
-		
-		/*
-		for (let i=0; i < POPULATION_SIZE; i++) {
-			//build a basic genome and randomize the connection weights
-			//NOTE: right now the weight differences are not captured in the innovation number. That is,
-			//they don't count as a distinct innovation. I am not sure at this point if that matters or not.
-			//i found out it does, because objects need to be created or the weight change will affect all instances.
-			var genome = new Genome();
-			genome.ID = this.genomeID;
-			genome.nodeGenes = inNodes.concat(outNodes);
-			genome.maxNeuron = genome.nodeGenes.length + 1;
-			genome.mutationRates = {
-				connections: MUTATE_CONNECTIONS_CHANCE,
-				link: LINK_MUTATION_CHANCE,
-				bias: BIAS_MUTATION_CHANCE,
-				node: NODE_MUTATION_CHANCE,
-				enable: ENABLE_MUTATION_CHANCE,
-				disable: DISABLE_MUTATION_CHANCE,
-				step: STEP_SIZE
-			};
-			//randomize the connection weights
-			//we have to create new connection objects 
-			
-			for (let j = 0; j < INPUT_NODES; j++) {
-				for (let k = 0; k < OUTPUT_NODES; k++) {
-					const connection = new ConnectionGene(
-						this.innovationID,
-						inNodes[j],
-						outNodes[k],
-						math.randf(-1,1),
-						true,
-						false
-					);
-					genome.connectionGenes.push(connection);
-					const innovation = this.innovationTable.createNewInnovation(
-						this.innovationID,
-						"new_connection",
-						connection.inNode,
-						connection.outNode,
-						-1,
-						"none"
-					);
-					this.innovationID++;
-				}
-			}
-
-			//now create a phenotype (a neural network) for each genome.
-			if (i<5) genome.createPhenotype();
-			this.genomes.push(genome);
-			this.genomeID++;
-		}
-		*/
 		return this;
 	}
-	epoch() {
+	epoch(population) {
 		//this is where fitness is evaluated, evolution happens, and a new generation is spawned.
+		console.log(this.genomes.map(a=>a.fitness));
+		console.log(population.map(a=>a.fitness));
+		this.genomes = population;
 	}
 }
 export default GeneticAlgorithm;

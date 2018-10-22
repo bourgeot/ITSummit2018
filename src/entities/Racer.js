@@ -10,6 +10,7 @@ import Whisker from "../../library/Whisker.js";
 const CONDITION_CLEAR = 0;
 const CONDITION_WARNING = 1;
 const CONDITION_FATAL = 2;
+const CONDITION_LEADER = 3;
 const maxSpeed = 1000;
 const MAX_SPEED = 1000;
 const MAX_ROTATION = Math.PI/2;
@@ -21,6 +22,7 @@ const spriteRotation = Math.PI/2;
 const CLEAR_CAR = new Texture("./res/Images/PNG/Cars/car_blue_small_1.png")
 const WARNING_CAR = new Texture("./res/Images/PNG/Cars/car_yellow_small_1.png");
 const FATAL_CAR = new Texture("./res/Images/PNG/Cars/car_red_small_1.png");
+const LEADER_CAR = new Texture("./res/Images/PNG/Cars/car_green_small_1.png");
 //make a segment data structure defined by two sets of points. Alternately an origin, an angle, and a length
 //a whisker will be a segment with a sprite at the origin and a sprite length away at angle, with an optional style
 
@@ -31,6 +33,8 @@ class Racer extends Container {
 	constructor(startPosition, controller, maxWhiskerLength) {
 		super();
 		this.alive = true;
+		this.startPosition = startPosition;
+		this.age = 0;
 		this.position = new Vector(startPosition.x, startPosition.y);
 		this.velocity = new Vector(0,0);
 		this.speed = 0;
@@ -38,6 +42,7 @@ class Racer extends Container {
 		this.heading = 0;
 		//this.controls = new KeyControls();
 		this.controller = controller;
+		this.avatar = {}; //<--this will hold the layout of the network
 		this.pivot = new Vector(0, 0);
 		this.pLength = this.pivot.magnitude();
 
@@ -69,6 +74,7 @@ class Racer extends Container {
 			this.whiskers.add(w);
 		}
 		this.add(this.whiskers);
+		this.add(this.controller);
 		//console.log(this.whiskers.children);
 	}
 	setCondition(condition = CONDITION_CLEAR) {
@@ -77,6 +83,9 @@ class Racer extends Container {
 		if (condition == CONDITION_FATAL) {
 			this.auto.texture = FATAL_CAR;
 			this.alive = false;
+		}
+		if (condition == CONDITION_LEADER) {
+			this.auto.texture = LEADER_CAR;
 		}
 	}
 	whiskerLocation(whisker) {
@@ -92,42 +101,9 @@ class Racer extends Container {
 		//v.rotate(this.theta);
 		return {x: Math.round(h.x), y: Math.round(h.y), theta: this.theta};
 	}
-	/*
+
 	update(dt, t) {
-		if(this.alive) {
-			var dTheta = 0;
-			//if up arrow is pressed
-			if (this.controller.y == -1 ) {
-				this.speed += maxAcc * dt;
-			}
-			//if space is pressed
-			if (this.controller.action) {
-				this.speed -= maxBrake * dt;
-			}
-			this.speed = math.clamp(this.speed, 0, maxSpeed);
-			//if right arrow is pressed
-			if (this.controller.x == 1) {
-				//there is a clockwise rotation
-				dTheta = maxTurnSpeed * dt;
-			}
-			if (this.controller.x == -1) {
-				//there is a counter clockwise rotation
-				 dTheta = - maxTurnSpeed * dt;
-			}
-			this.theta = this.theta + dTheta;
-			this.theta = this.theta % (Math.PI * 2);
-			this.rotation = this.theta;
-			if (this.speed * dt > .00001) {
-				const deltaP = {x: (this.speed * dt) * Math.cos(this.theta),
-					y:(this.speed * dt) * Math.sin(this.theta)};
-				this.position.x += deltaP.x;
-				this.position.y += deltaP.y;
-			}
-			//const deltaR = 0;
-		}
-	}
-	*/
-	update(dt, t) {
+		super.update(dt, t);
 		//NN controls will be from two neurons. one for the angle, and one for the speed, each from zero to 1
 		//where the measure of the angle of the wheel is Theta = (neuronOut * Math.PI /2) - Math.PI/4, and 
 		//the speed is neuronOut * maxSpeed
@@ -138,9 +114,10 @@ class Racer extends Container {
 		//array of the controller.
 		//x = vt
 		if (this.alive) {
-			this.speed = this.controller.outputActions[0] * MAX_SPEED;
+			this.speed = this.controller.outputActions[0] * MAX_SPEED + math.rand(50);
 			this.heading += this.controller.outputActions[1] * MAX_ROTATION - Math.PI/4;
-			this.heading = this.heading % Math.PI * 2;
+			this.heading = this.heading + math.randf(-.001, .001) % Math.PI * 2;
+			this.auto.rotation = this.heading + spriteRotation;
 			if (this.speed * dt > .00001) {
 				const deltaP = {
 					x: Math.floor(this.speed * dt * Math.cos(this.heading)),
@@ -148,13 +125,16 @@ class Racer extends Container {
 				};
 				this.position.x += deltaP.x;
 				this.position.y += deltaP.y;
-			
 				this.controller.fitness += deltaP.x * deltaP.x + deltaP.y * deltaP.y;
 			}
 			//now update the sensor values of the controller's input array
 			for (let i=0; i < this.whiskers.length; i++) {
 				this.controller.inputSensors[i] = this.whiskers.element(i);
 			}
+		this.age += dt;
+		}
+		else {
+			this.fitness -= Math.floor(this.age/100);
 		}
 		
 	}
