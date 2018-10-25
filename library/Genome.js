@@ -23,12 +23,12 @@ class Genome {
 		this.globalRank = 0;
 		this.mutationRates = {
 			connections: 0,
-			link: 0,
 			bias: 0,
 			node: 0,
 			enable: 0,
 			disable: 0,
-			step: 0
+			preturbation: 0,
+			weightReplacement: 0
 		};
 	}
 
@@ -294,7 +294,18 @@ class Genome {
 		
 	}
 	mutateWeights () {
-		
+		if (Math.random() > this.mutationRates.preturbation) {
+			return;
+		}
+		for (let i=0; i < this.connectionGenes.length; i++) {
+			//pick a new random weight and assign it...or replace it
+			if (Math.random() > this.mutationRates.weightReplacement) {
+				this.connectionGenes[i].connectionWeight += math.randf(-.5,.5);
+			}
+			else {
+				this.connectionGenes[i].connectionWeight = math.randf(-1, 1);
+			}
+		}
 	}
 	mutateActivationResponse () {
 		

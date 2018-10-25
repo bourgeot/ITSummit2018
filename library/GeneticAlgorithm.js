@@ -105,7 +105,8 @@ class GeneticAlgorithm {
 			node: NODE_MUTATION_CHANCE,
 			enable: ENABLE_MUTATION_CHANCE,
 			disable: DISABLE_MUTATION_CHANCE,
-			step: STEP_SIZE
+			preturbation: PRETURBATION_CHANCE,
+			weightReplacement: WEIGHT_REPLACEMENT_CHANCE
 		};
 		for (let j = 0; j < INPUT_NODES; j++) {
 			for (let k = 0; k < OUTPUT_NODES; k++) {
@@ -149,8 +150,8 @@ class GeneticAlgorithm {
 	}
 	epoch(population) {
 		//this is where fitness is evaluated, evolution happens, and a new generation is spawned.
-		console.log(this.genomes.map(a=>a.fitness));
-		console.log(population.map(a=>a.fitness));
+		//console.log(this.genomes.map(a=>a.fitness));
+		//console.log(population.map(a=>a.fitness));
 		this.genomes = population;
 	}
 }
