@@ -57,6 +57,9 @@ class GeneticAlgorithm {
 		this.genomes = [];
 
 	}
+	newGenomeID() {
+		return this.genomeID++;
+	}
 	initialize() {
 		//create POPULATION_SIZE initial Genomes where all the inputs are connected directly to the outputs.
 		//all are members of an initial species.
@@ -134,18 +137,20 @@ class GeneticAlgorithm {
 		this.genomes.push(genome);
 		//Now from this master create copies with random connection weights.
 		for (let i=1; i<POPULATION_SIZE; i++) {
-			this.genomeID++;
+			this.newGenomeID();
 			const g2 = genome.copy(this.genomeID);
 			for (let j = 0; j < g2.connectionGenes.length; j++){
 				g2.connectionGenes[j].connectionWeight = math.randf(-1,1);
 			}
 			//test
-			g2.addNode();
-			g2.addConnection();
-			g2.deletePhenotype();
+			//g2.addNode();
+			//g2.addConnection();
+			//g2.deletePhenotype();
 			g2.createPhenotype();
 			this.genomes.push(g2);
 		}
+		this.genomes[0].fitness = 1;
+		this.crossover(this.genomes[0], this.genomes[POPULATION_SIZE - 1]);
 		return this;
 	}
 	epoch(population) {
@@ -153,6 +158,101 @@ class GeneticAlgorithm {
 		//console.log(this.genomes.map(a=>a.fitness));
 		//console.log(population.map(a=>a.fitness));
 		this.genomes = population;
+	}
+	crossover (mother, father) {
+		//let mom = mother;
+		//let dad = father;
+		let kidGenes = [];
+		let kidNeurons = [];
+		//sort by IDs 
+		let momGenes = mother.connectionGenes.sort((a, b) => a.ID < b.ID);
+		let dadGenes = father.connectionGenes.sort((a, b) => a.ID < b.ID);
+		// choose the parent with the highest fitness or, if equal, pick one at random
+		let fittest = "m";
+		let kidGenome = mother.copy(this.newGenomeID(), this);
+		if (mother.fitness == father.fitness) {
+			if (Math.random() > 0.5000) {
+				fittest = "d";
+				kidGenome = father.copy(this.newGenomeID(), this);
+
+			}
+		}
+		else {
+			if(mother.fitness < father.fitness) {
+				fittest = "d";
+				kidGenome = father.copy(this.newGenomeID(), this);
+
+			}
+		}
+		//the crossover will choose matching genes at random. Disjoint genes will be inherited from the fittest parent.
+		let mIdx = 0;
+		let dIdx = 0;
+		let mLen = momGenes.length;
+		let dLen = dadGenes.length;
+		let selected = {};
+		while (mIdx != mLen && dIdx != dLen)  {
+			//edge: no more mom genes
+			if(mIdx == mLen && dIdx != dLen) {
+				if (fittest == "d") {
+					selected = dadGenes[dIdx].copy(dadGenes[dIdx].ID);
+					dIdx++;
+				}
+			}
+			//edge: no more dad genes
+			else if(mIdx != mLen && dIdx == dLen) {
+				if (fittest == "m") {
+					selected = momGenes[mIdx].copy(momGenes[mIdx].ID);
+					mIdx++;
+				}
+			}
+			//mom's innovation lower
+			else if (momGenes[mIdx].ID < dadGenes[dIdx].ID) {
+				if (fittest == "m") {
+					selected = momGenes[mIdx].copy(momGenes[mIdx].ID);
+					mIdx++;
+				}
+			}
+			//dad's innovation lower
+			else if (dadGenes[dIdx].ID < momGenes[mIdx].ID) {
+				if (fittest == "d") {
+					selected = dadGenes[dIdx].copy(dadGenes[dIdx].ID);
+					dIdx++;
+				}
+			}
+			//equal
+			else if (momGenes[mIdx].ID == dadGenes[dIdx].ID) {
+				if (Math.random() > .50000) {
+					selected = momGenes[mIdx].copy(momGenes[mIdx].ID);
+				}
+				else {
+					selected = dadGenes[dIdx].copy(dadGenes[dIdx].ID);
+				}
+				//increment both
+				mIdx++;
+				dIdx++;
+			}
+			//add the selected gene if it hasn't already been added
+			if (kidGenes.length == 0) {
+				kidGenes.push(selected);
+			}
+			else if (kidGenes.filter(obj => obj.ID == selected.ID).length == 0 ) {
+				kidGenes.push(selected);
+			}
+			//add the neuron Genes
+			if (kidNeurons.filter(obj => obj.ID == selected.inNode.ID).length == 0) {
+				kidNeurons.push(selected.inNode.copy());
+			}
+			if (kidNeurons.filter(obj => obj.ID == selected.outNode.ID).length == 0) {
+				kidNeurons.push(selected.outNode.copy());
+			}
+
+		}
+		//return the new genome based on the fittest
+		kidGenome.connectionGenes = kidGenes;
+		kidGenome.nodeGenes = kidNeurons;
+		//console.log(fittest);
+		//console.log(kidGenome);
+		return kidGenome;
 	}
 }
 export default GeneticAlgorithm;
