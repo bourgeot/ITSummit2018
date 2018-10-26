@@ -300,9 +300,11 @@ class Genome {
 		for (let i=0; i < this.connectionGenes.length; i++) {
 			//pick a new random weight and assign it...or replace it
 			if (Math.random() > this.mutationRates.weightReplacement) {
+				//preturb it
 				this.connectionGenes[i].connectionWeight += math.randf(-.5,.5);
 			}
 			else {
+				//replace it
 				this.connectionGenes[i].connectionWeight = math.randf(-1, 1);
 			}
 		}
@@ -312,22 +314,92 @@ class Genome {
 	}
 
 	crossover (mother, father) {
-		// choose the parent with the highest fitness or pick one at random
-		let fittest = mother;
+		//let mom = mother;
+		//let dad = father;
+		let kidGenes = [];
+		let kidNeurons = [];
+		//sort by IDs 
+		let momGenes = mother.connectionGenes.sort((a, b) => a.ID < b.ID);
+		let dadGenes = father.connectionGenes.sort((a, b) => a.ID < b.ID);
+		// choose the parent with the highest fitness or, if equal, pick one at random
+		let fittest = "m";
 		if (mother.fitness == father.fitness) {
-			if (Math.random() > 0.49999) {
-				fittest = father;
+			if (Math.random() > 0.5000) {
+				fittest = "d";
 			}
 		}
 		else {
 			if(mother.fitness < father.fitness) {
-				fittest = father;
+				fittest = "d";
 			}
 		}
-		let momGenes = mother.connectionGenes.sort((a, b) => a.ID < b.ID);
-		let dadGenes = father.connectionGenes.sort((a, b) => a.ID < b.ID);
-		console.log(g1IDs);
-		console.log(g2IDs);
+		//the crossover will choose matching genes at random. Disjoint genes will be inherited from the fittest parent.
+		let mIdx = 0;
+		let dIdx = 0;
+		let mLen = momGenes.length;
+		let dLen = dadGenes.length;
+		let selected = {};
+		while (mIdx != mLen && dIdx != dLen)  {
+			//edge: no more mom genes
+			if(mIdx == mLen && dIdx != dLen) {
+				if (fittest == "d") {
+					selected = dadGenes[dIdx];
+					dIdx++;
+				}
+			}
+			//edge: no more dad genes
+			else if(mIdx != mLen && dIdx == dLen) {
+				if (fittest == "m") {
+					selected = momGenes[mIdx];
+					mIdx++;
+				}
+			}
+			//mom's innovation lower
+			else if (momGenes[mIdx].ID < dadGenes[dIdx].ID) {
+				if (fittest == "m") {
+					selected = momGenes[mIdx];
+					mIdx++;
+				}
+			}
+			//dad's innovation lower
+			else if (dadGenes[dIdx].ID < momGenes[mIdx].ID) {
+				if (fittest == "d") {
+					selected = dadGenes[dIdx];
+					dIdx++;
+				}
+			}
+			//equal
+			else if (momGenes[mIdx].ID == dadGenes[dIdx].ID) {
+				if (Math.random() > .50000) {
+					selected = momGenes[mIdx];
+				}
+				else {
+					selected = dadGenes[dIdx];
+				}
+				//increment both
+				mIdx++;
+				dIdx++;
+			}
+			//add the selected gene if it hasn't already been added
+			if (kidGenes.length == 0) {
+				kidGenes.push(selected);
+			}
+			else if (kidGenes.filter(obj => obj.ID == selected.ID).length == 0 ) {
+				
+			}
+			123578
+			12689
+			
+			
+			
+			
+			
+			//step through the genes and compare. 
+			if (momGenes[mIdx].ID == dadGenes[dIdx].ID)
+		}
+		
+		
+
 
 	}
 	createPhenotype () {
