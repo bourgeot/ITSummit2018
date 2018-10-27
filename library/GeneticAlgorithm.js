@@ -60,6 +60,9 @@ class GeneticAlgorithm {
 	newGenomeID() {
 		return this.genomeID++;
 	}
+	newSpeciesID() {
+		return this.speciesID++;
+	}
 	initialize() {
 		//create POPULATION_SIZE initial Genomes where all the inputs are connected directly to the outputs.
 		//all are members of an initial species.
@@ -135,6 +138,10 @@ class GeneticAlgorithm {
 		}
 		genome.createPhenotype();
 		this.genomes.push(genome);
+		create the first species.
+		this.species.push(new Species(this.newSpeciesID()));
+		this.species[0].addMemberZero(genome);
+		//this.species[0].genomes.push(genome);
 		//Now from this master create copies with random connection weights.
 		for (let i=1; i<POPULATION_SIZE; i++) {
 			this.newGenomeID();
@@ -148,16 +155,58 @@ class GeneticAlgorithm {
 			//g2.deletePhenotype();
 			g2.createPhenotype();
 			this.genomes.push(g2);
+			//this.species[0].genomes.push(g2);
 		}
-		this.genomes[0].fitness = 1;
-		this.crossover(this.genomes[0], this.genomes[POPULATION_SIZE - 1]);
+		//this.genomes[0].fitness = 1;
+		//this.crossover(this.genomes[0], this.genomes[POPULATION_SIZE - 1]);
+		
+		//console.log(s.compatibilityScore(this.genomes[0],this.genomes[19]));
+			
+		
 		return this;
 	}
-	epoch(population) {
+	epoch() {
 		//this is where fitness is evaluated, evolution happens, and a new generation is spawned.
 		//console.log(this.genomes.map(a=>a.fitness));
 		//console.log(population.map(a=>a.fitness));
-		this.genomes = population;
+		//sort the genomes based on their fitness score
+		this.genomes.sort((a,b) => b.fitness > a.fitness);
+		//console.log(this.genomes);
+		//speciate
+		
+		for(let i=0;i<this.genomes.length; i++) {
+			//sort into species.
+			for(let j=0; j < this.species.length; j++) {
+				if(this.species[j].compatibilityScore(this.genomes[i]) > COMPATIBILITY_THRESHOLD) {
+					const newSpecies = this.species.push(new Species(this.newSpeciesID()));
+					newSpecies.addMemberZero(this.genomes[i]);
+				}
+				else {
+					this.species[j].push(this.genomes[i]);
+				}
+			}
+		}
+		//now they are sorted into species. for each species, manage the fitness and other details
+		for(let i=0;i<this.species.length; i++) {
+			this.species[i].manageFitnessAndSpawnLevels();
+			this.species[i].happyBirthday();
+			//this.species[i].spawnOffspring();
+		}
+		
+		/*
+		for(let i=0;i<this.species.length; i++) {
+			for(let j=0; j<this.species[i].genomes.length; j++) {
+				if(this.species[i].compatibilityScore(this.species[i].genomes[j]) > COMPATIBILITY_THRESHOLD) {
+					//make a new species
+					const outlier = this.species[i].genomes.splice(j,1);
+					const newSpecies = this.species.push(new Species(this.newSpeciesID()));
+					newSpecies.memberZero = outlier;
+					newSpecies.genomes.push(outlier);
+				}
+			}
+		}
+		*/
+		
 	}
 	crossover (mother, father) {
 		//let mom = mother;
