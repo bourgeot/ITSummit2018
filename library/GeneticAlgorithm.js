@@ -182,16 +182,20 @@ class GeneticAlgorithm {
 			//sort into species.
 			let createNewSpecies = false;
 			for(let j=0; j < this.species.length; j++) {
+				if (this.species[j].memberZero.ID == this.genomes[i]) {
+					break;
+				}
 				const cScore = this.species[j].compatibilityScore(this.genomes[i]);
-				//console.log(cScore);
+					//console.log(cScore);
 				if(cScore > COMPATIBILITY_THRESHOLD) {
 					//console.log('possible new species');
 					createNewSpecies = true;
 				}
 				else {
 					//console.log('no: added member');
-					this.species[j].genomes.push(this.genomes[i]);
+					//this.species[j].genomes.push(this.genomes[i]);
 					createNewSpecies = false;
+					this.species[j].genomes.push(this.genomes[i]);
 					break;
 				}
 			}
@@ -200,19 +204,19 @@ class GeneticAlgorithm {
 				const newSpecies = new Species(this.newSpeciesID());
 				this.species.push(newSpecies);
 				newSpecies.addMemberZero(this.genomes[i]);
-
-			}	
+			}
+			
 		}
 		//now they are sorted into species. for each species, manage the fitness and other details
-		console.log(this.species.length);
-		alert();
+		//alert();
 		for(let i=0;i<this.species.length; i++) {
 			this.species[i].manageFitnessAndSpawnLevels();
 			this.species[i].happyBirthday();
-			console.log(this.species[i]);
+			//console.log(this.species[i]);
 			newPool = newPool.concat(this.species[i].spawnOffspring());
 		}
-		console.log(newPool);
+		//console.log(this.species);
+		//console.log(newPool);
 		alert();
 		/*
 		for(let i=0;i<this.species.length; i++) {
@@ -234,30 +238,31 @@ class GeneticAlgorithm {
 		//let dad = father;
 		let kidGenes = [];
 		let kidNeurons = [];
-		
+		var kidGenome, fittest;
+		console.log
 		//sort by IDs 
 		let momGenes = mother.connectionGenes.sort((a, b) => a.ID < b.ID);
 		let dadGenes = father.connectionGenes.sort((a, b) => a.ID < b.ID);
 		// choose the parent with the highest fitness or, if equal, pick one at random
 		if (mother.fitness == father.fitness) {
 			if (Math.random() > 0.5000) {
-				let fittest = "d";
-				let kidGenome = father.copy(this.newGenomeID(), this);
+				 fittest = "d";
+				 kidGenome = father.copy(this.newGenomeID(), this);
 			}
 			else {
-				let fittest = "m";
-				let kidGenome = mother.copy(this.newGenomeID(), this);
+				 fittest = "m";
+				 kidGenome = mother.copy(this.newGenomeID(), this);
 
 			}
 		}
 		else{
 			if(mother.fitness < father.fitness) {
-				let fittest = "d";
-				let kidGenome = father.copy(this.newGenomeID(), this);
+				 fittest = "d";
+				 kidGenome = father.copy(this.newGenomeID(), this);
 			}
 			else {
-				let fittest = "m";
-				let kidGenome = mother.copy(this.newGenomeID(), this);	
+				 fittest = "m";
+				 kidGenome = mother.copy(this.newGenomeID(), this);	
 			}
 		}
 		//the crossover will choose matching genes at random. Disjoint genes will be inherited from the fittest parent.
