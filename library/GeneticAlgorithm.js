@@ -2,6 +2,9 @@
 const POPULATION_SIZE = 20;
 const INPUT_NODES = 5;
 const OUTPUT_NODES = 2;
+const SPEED_NEURON  = 0;
+const HEADING_NEURON = 1;
+
 const PRETURBATION_CHANCE = 0.5;
 const WEIGHT_REPLACEMENT_CHANCE = 0.1;
 const CROSSOVER_CHANCE = 0.75;
@@ -73,6 +76,7 @@ class GeneticAlgorithm {
 		*/
 		var inNodes = [];
 		var outNodes = [];
+		var nType;
 		for (let j = 0; j < INPUT_NODES; j++) {
 			const inputNode = new NodeGene(this.nodeID, "input", false, 1.0, {x:j+1, y:0});
 			inNodes.push(inputNode);
@@ -88,7 +92,13 @@ class GeneticAlgorithm {
 			//this.innovationID++;
 		}
 		for (let j = 0; j < OUTPUT_NODES; j++) {
-			const outputNode = new NodeGene(this.nodeID, "output", false, 1.0, {x:j+1, y:1});
+			if (j == SPEED_NEURON) {
+				nType = "speed";
+			}
+			else {
+				nType = "heading";
+			}
+			const outputNode = new NodeGene(this.nodeID, nType, false, 1.0, {x:j+1, y:1});
 			outNodes.push(outputNode);
 			this.nodeID++;
 			this.innovationTable.createNewInnovation(

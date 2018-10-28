@@ -6,7 +6,7 @@ class NodeGene {
 		*/
 		//connection genes specify the two nodes linked together (an in node and an node
 		this.ID = ID;
-		// input, hidden, bias, output, none
+		// input, hidden, bias, speed, heading, none
 		this.type = type;
 		this.recurrent = recurrent;
 		this.activationResponse = activationResponse;

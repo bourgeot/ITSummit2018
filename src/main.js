@@ -48,7 +48,7 @@ if (ready) {
 	//compatibilityScore(ready.genomes[0], ready.genomes[1]);
 	startGame();
 }
-game.run(gameOver);
+game.run();
 //if (ready) console.log(ready);
 
 //this will need call backs so that the game, doesn't start until the GA has had a chance to evaluate and evolve a population.

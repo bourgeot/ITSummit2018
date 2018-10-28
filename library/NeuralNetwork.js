@@ -4,6 +4,9 @@ import Arc from "./Arc.js";
 import Path from "./Path.js";
 import Neuron from "./Neuron.js";
 import Genome from "./Genome.js";
+const SPEED_NEURON  = 0;
+const HEADING_NEURON = 1;
+
 
 class NeuralNetwork extends Container {
 	constructor(genome, neurons = [], connections = []) {
@@ -22,6 +25,7 @@ class NeuralNetwork extends Container {
 	}
 	
 	update(deltaT, t) {
+		/*
 		for (let i=0; i < this.outputActions.length-1; i++) {
 			if(this.outputActions[i]  >.5) {
 				this.outputActions[i] -= .001;
@@ -31,15 +35,17 @@ class NeuralNetwork extends Container {
 				this.outputActions[i] += 0.001;
 			}
 		}
-		/*
+		*/
 		for (let j=0; j < this.neurons.length; j++) {
 			this.neurons[j].calculateOutput();
-			if (this.neurons[j].type == "output") {
-				//this won't work. need to assign which neuron controls which thing
-				this.outputActions[j] = this.neurons[j].output;
+			if (this.neurons[j].type == "speed") {
+				this.outputActions[SPEED_NEURON] = this.neurons[j].output;
+			}
+			if (this.neurons[j].type == "heading") {
+				this.outputActions[HEADING_NEURON] = this.neurons[j].output;
 			}
 		}
-		*/
+		
 	}
 }
 export default NeuralNetwork;

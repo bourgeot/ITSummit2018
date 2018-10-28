@@ -14,6 +14,7 @@ const CONDITION_LEADER = 3;
 const FATAL_DISTANCE = 25;
 const MAX_WHISKER_LENGTH = 100;
 const START_POSITION = {x: 303, y: 280};
+const MAXIMUM_LIFETIME = 10000;
 
 //level player racer
 class GameScreen extends Container {
@@ -27,6 +28,7 @@ class GameScreen extends Container {
 		this.racers = [];
 		this.dead = [];
 		//this.controls = contestants[0];
+		this.lifetime = MAXIMUM_LIFETIME;
 		this.onGameOver = onGameOver;
 		const { scoreboard, scene, frontrunner, w, h } = game;
 			
@@ -71,8 +73,13 @@ class GameScreen extends Container {
 	}
 	update(dt, t) {
 		super.update(dt, t);
-		
+		if (this.lifetime <= 0) {
+			for (let i=0; i < this.racers.length; i++) {
+				this.racers[i].setCondition(CONDITION_FATAL);
+			}
+		}
 		//if all the racers are dead then evolve!
+		
 		//track collision and resolution here
 		  // collision detection
 		this.location.text = "";  // might move this	  
@@ -148,15 +155,17 @@ class GameScreen extends Container {
 				}
 			}
 		}
-		//if () this.onGameOver;
+
 		this.racers.sort((a, b) => b.controller.fitness > a.controller.fitness);
 		this.leadRacer = this.racers[0];
 		this.leadRacer.setCondition(CONDITION_LEADER);
 		this.camera.setSubject(this.leadRacer);
-		this.location.text += this.leadRacer.controller.fitness;
-
-
-  
+		this.location.text += "Fitness: " + this.leadRacer.controller.fitness;
+		this.location.text += "\nSensors: " + this.leadRacer.controller.inputSensors.toString();
+		this.location.text += "\nHeading: " +  this.leadRacer.controller.outputActions[0].toString();
+		this.location.text += "\nSpeed: " +  this.leadRacer.controller.outputActions[1].toString();
+		this.lifetime -= dt * 1000;
+ 
 	}
 }
 

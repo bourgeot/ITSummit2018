@@ -23,6 +23,8 @@ const CLEAR_CAR = new Texture("./res/Images/PNG/Cars/car_blue_small_1.png")
 const WARNING_CAR = new Texture("./res/Images/PNG/Cars/car_yellow_small_1.png");
 const FATAL_CAR = new Texture("./res/Images/PNG/Cars/car_red_small_1.png");
 const LEADER_CAR = new Texture("./res/Images/PNG/Cars/car_green_small_1.png");
+const SPEED_NEURON  = 0;
+const HEADING_NEURON = 1;
 //make a segment data structure defined by two sets of points. Alternately an origin, an angle, and a length
 //a whisker will be a segment with a sprite at the origin and a sprite length away at angle, with an optional style
 
@@ -114,8 +116,8 @@ class Racer extends Container {
 		//array of the controller.
 		//x = vt
 		if (this.alive) {
-			this.speed = this.controller.outputActions[0] * MAX_SPEED + math.rand(50);
-			this.heading += this.controller.outputActions[1] * MAX_ROTATION - Math.PI/4;
+			this.speed = this.controller.outputActions[SPEED_NEURON] * MAX_SPEED + math.rand(50);
+			this.heading += this.controller.outputActions[HEADING_NEURON] * MAX_ROTATION - Math.PI/4;
 			this.heading = this.heading + math.randf(-.001, .001) % Math.PI * 2;
 			this.auto.rotation = this.heading + spriteRotation;
 			if (this.speed * dt > .00001) {
@@ -128,8 +130,8 @@ class Racer extends Container {
 				this.controller.fitness += deltaP.x * deltaP.x + deltaP.y * deltaP.y;
 			}
 			//now update the sensor values of the controller's input array
-			for (let i=0; i < this.whiskers.length; i++) {
-				this.controller.inputSensors[i] = this.whiskers.element(i);
+			for (let i=0; i < this.whiskers.children.length; i++) {
+				this.controller.inputSensors[i] = Math.floor(this.whiskers.children[i].length);
 			}
 		this.age += dt;
 		}

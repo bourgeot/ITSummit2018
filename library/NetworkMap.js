@@ -39,7 +39,7 @@ class NetworkMap extends Container {
 					y:height - BORDER - INPUT_ICON_SIZE
 				}
 			}
-			else if (network.neurons[i].type == "output") {
+			else if (network.neurons[i].type == "speed" || network.neurons[i].type =="heading") {
 				outputCtr++;
 				let firstOut = 0;
 				if (outputCtr == 1) firstOut = 1;

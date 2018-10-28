@@ -36,7 +36,7 @@ class Neuron extends Container {
 			//green if positive, red if negative, grey if not activated
 			this.icon = new Arc(HIDDEN_ICON_SIZE, {fill: "green"});
 		}
-		else if (this.type == "output") {
+		else if (this.type == "speed" || this.type == "heading") {
 			//blue if activated, grey otherwise
 			this.icon = new Arc(OUTPUT_ICON_SIZE, {fill: "blue"});
 		}

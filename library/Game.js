@@ -42,7 +42,6 @@ class Game {
 			this.leaderBoard.render(this.frontrunner);
 		};
 		requestAnimationFrame(gameLoop);
-		if(gameOver) return;
 	}
 }
 	
