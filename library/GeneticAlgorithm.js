@@ -9,10 +9,10 @@ const MUTATE_CONNECTIONS_CHANCE = 0.3;
 const LINK_MUTATION_CHANCE = 0.17;
 const BIAS_MUTATION_CHANCE = 0;
 const NODE_MUTATION_CHANCE = 0.514;
-const ENABLE_MUTATION_CHANCE = 0;
-const DISABLE_MUTATION_CHANCE = 0;
+const ENABLE_MUTATION_CHANCE = 0.1;
+const DISABLE_MUTATION_CHANCE = 0.1;
 
-const COMPATIBILITY_THRESHOLD = 0.26;
+const COMPATIBILITY_THRESHOLD = 0.36;
 
 
 const STEP_SIZE  = 0;
@@ -138,7 +138,7 @@ class GeneticAlgorithm {
 		}
 		genome.createPhenotype();
 		this.genomes.push(genome);
-		create the first species.
+		//create the first species.
 		this.species.push(new Species(this.newSpeciesID()));
 		this.species[0].addMemberZero(genome);
 		//this.species[0].genomes.push(genome);
@@ -165,34 +165,55 @@ class GeneticAlgorithm {
 		
 		return this;
 	}
-	epoch() {
+	epoch(population) {
 		//this is where fitness is evaluated, evolution happens, and a new generation is spawned.
+		//console.log(population);
+		for (let i=0; i < population.length; i++) {
+			population[i].genome.fitness = population[i].fitness;
+		}
 		//console.log(this.genomes.map(a=>a.fitness));
 		//console.log(population.map(a=>a.fitness));
 		//sort the genomes based on their fitness score
-		this.genomes.sort((a,b) => b.fitness > a.fitness);
+		//this.genomes.sort((a,b) => b.fitness > a.fitness);
 		//console.log(this.genomes);
 		//speciate
-		
+		let newPool = [];
 		for(let i=0;i<this.genomes.length; i++) {
 			//sort into species.
+			let createNewSpecies = false;
 			for(let j=0; j < this.species.length; j++) {
-				if(this.species[j].compatibilityScore(this.genomes[i]) > COMPATIBILITY_THRESHOLD) {
-					const newSpecies = this.species.push(new Species(this.newSpeciesID()));
-					newSpecies.addMemberZero(this.genomes[i]);
+				const cScore = this.species[j].compatibilityScore(this.genomes[i]);
+				//console.log(cScore);
+				if(cScore > COMPATIBILITY_THRESHOLD) {
+					//console.log('possible new species');
+					createNewSpecies = true;
 				}
 				else {
-					this.species[j].push(this.genomes[i]);
+					//console.log('no: added member');
+					this.species[j].genomes.push(this.genomes[i]);
+					createNewSpecies = false;
+					break;
 				}
 			}
+			if(createNewSpecies) {
+				//console.log('created');
+				const newSpecies = new Species(this.newSpeciesID());
+				this.species.push(newSpecies);
+				newSpecies.addMemberZero(this.genomes[i]);
+
+			}	
 		}
 		//now they are sorted into species. for each species, manage the fitness and other details
+		console.log(this.species.length);
+		alert();
 		for(let i=0;i<this.species.length; i++) {
 			this.species[i].manageFitnessAndSpawnLevels();
 			this.species[i].happyBirthday();
-			//this.species[i].spawnOffspring();
+			console.log(this.species[i]);
+			newPool = newPool.concat(this.species[i].spawnOffspring());
 		}
-		
+		console.log(newPool);
+		alert();
 		/*
 		for(let i=0;i<this.species.length; i++) {
 			for(let j=0; j<this.species[i].genomes.length; j++) {
@@ -213,24 +234,30 @@ class GeneticAlgorithm {
 		//let dad = father;
 		let kidGenes = [];
 		let kidNeurons = [];
+		
 		//sort by IDs 
 		let momGenes = mother.connectionGenes.sort((a, b) => a.ID < b.ID);
 		let dadGenes = father.connectionGenes.sort((a, b) => a.ID < b.ID);
 		// choose the parent with the highest fitness or, if equal, pick one at random
-		let fittest = "m";
-		let kidGenome = mother.copy(this.newGenomeID(), this);
 		if (mother.fitness == father.fitness) {
 			if (Math.random() > 0.5000) {
-				fittest = "d";
-				kidGenome = father.copy(this.newGenomeID(), this);
+				let fittest = "d";
+				let kidGenome = father.copy(this.newGenomeID(), this);
+			}
+			else {
+				let fittest = "m";
+				let kidGenome = mother.copy(this.newGenomeID(), this);
 
 			}
 		}
-		else {
+		else{
 			if(mother.fitness < father.fitness) {
-				fittest = "d";
-				kidGenome = father.copy(this.newGenomeID(), this);
-
+				let fittest = "d";
+				let kidGenome = father.copy(this.newGenomeID(), this);
+			}
+			else {
+				let fittest = "m";
+				let kidGenome = mother.copy(this.newGenomeID(), this);	
 			}
 		}
 		//the crossover will choose matching genes at random. Disjoint genes will be inherited from the fittest parent.

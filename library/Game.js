@@ -26,7 +26,7 @@ class Game {
 
 	}
 	//Methods
-	run (gameUpdate = () => {}) {
+	run (gameOver) {
 		let deltaT = 0;
 		let lastT = 0;
 		const gameLoop = ms => {
@@ -36,12 +36,13 @@ class Game {
 			lastT = t;
 
 			this.scene.update(deltaT, t);
-			gameUpdate(deltaT, t);
+			//gameUpdate(deltaT, t);
 			this.renderer.render(this.scene);
 			this.hud.render(this.scoreboard);
 			this.leaderBoard.render(this.frontrunner);
 		};
 		requestAnimationFrame(gameLoop);
+		if(gameOver) return;
 	}
 }
 	

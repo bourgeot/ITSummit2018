@@ -3,13 +3,15 @@ import Container from "./Container.js";
 import Arc from "./Arc.js";
 import Path from "./Path.js";
 import Neuron from "./Neuron.js";
+import Genome from "./Genome.js";
 
 class NeuralNetwork extends Container {
-	constructor(neurons = [], connections = []) {
+	constructor(genome, neurons = [], connections = []) {
 		//by extending Container there is a renderable children array, a position, and an update method.
 		//nodes: ID, type, recurrent, activationResponse, position
 		//connections: ID, inNode, outNode, connectionWeight, enabled, recurrent
 		super();
+		this.genome = genome;
 		this.neurons = neurons;
 		this.connections = connections;
 		this.inputSensors = [0, 0, 0, 0, 0];

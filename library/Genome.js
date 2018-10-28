@@ -52,6 +52,30 @@ class Genome {
 		}
 		return c;
 	}
+	mutate() {
+		this.addNode();
+		this.addConnection(this.GeneticAlgorithm);
+		this.mutateWeights();
+		this.toggleConnection();
+		
+	}
+	toggleConnection() {
+		let candidates = [];
+		if (Math.random() <= this.mutationRates.disable) {
+			//pick a randome enabled connection and disable it
+			candidates = this.connectionGenes.filter(a => a.enabled == true);
+			if ( candidates.length > 0) {
+				math.randOneFrom(candidates).enabled = false;
+			}			
+		}
+		if (Math.random() <= this.mutationRates.enable) {
+			//pick a disabled connection and enable it.
+			candidates = this.connectionGenes.filter(a => a.enabled == false);
+			if ( candidates.length > 0) {
+				math.randOneFrom(candidates).enabled = true;
+			}
+		}
+	}
 	addNode () {
 		if (Math.random() > this.mutationRates.node) {
 			return;
@@ -363,7 +387,7 @@ class Genome {
 			}
 		}
 		//console.log(nodes);
-		this.network = new NeuralNetwork(nodes, this.connectionGenes);
+		this.network = new NeuralNetwork(this, nodes, this.connectionGenes);
 	}
 	deletePhenotype () {
 		this.network = {};

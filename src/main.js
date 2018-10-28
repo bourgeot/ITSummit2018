@@ -38,6 +38,7 @@ const FATAL_DISTANCE = 25;
 */
 const game = new Game(640, 480, '#gameBoard' );
 const ga = new GeneticAlgorithm();
+var gameOver=false;
 //const controls = new KeyControls();
 
 const ready = newGA();
@@ -47,7 +48,7 @@ if (ready) {
 	//compatibilityScore(ready.genomes[0], ready.genomes[1]);
 	startGame();
 }
-game.run();
+game.run(gameOver);
 //if (ready) console.log(ready);
 
 //this will need call backs so that the game, doesn't start until the GA has had a chance to evaluate and evolve a population.
@@ -67,6 +68,7 @@ function newEpoch(population) {
 	//alert(population.map(a => a.fitness).toString());
 	//alert(scores.toString());
 	ga.epoch(population);
+	gameOver = true;
 }
 function newGA() {
 	//spawn a new world and create neural networks!
