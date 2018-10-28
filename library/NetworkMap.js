@@ -37,7 +37,7 @@ class NetworkMap extends Container {
 				network.neurons[i].position = {
 					x:Math.floor((width - BORDER*2 - INPUT_ICON_SIZE) * inputCtr / INPUT_NEURONS),
 					y:height - BORDER - INPUT_ICON_SIZE
-				}
+				};
 			}
 			else if (network.neurons[i].type == "speed" || network.neurons[i].type =="heading") {
 				outputCtr++;
@@ -46,13 +46,17 @@ class NetworkMap extends Container {
 				network.neurons[i].position = {
 					x: Math.floor((width-BORDER*2-OUTPUT_ICON_SIZE) * outputCtr / OUTPUT_NEURONS),
 					y: BORDER + OUTPUT_ICON_SIZE
-				}
+				};
 			}
 			else {
 				hiddenCtr++;
 				//more to come here
-				console.log('hidden added to map');
-				console.log(network.neurons[i]);
+				//console.log('hidden added to map');
+				//console.log(network.neurons[i]);
+				network.neurons[i].position = {
+					x: Math.floor((width-BORDER*2-HIDDEN_ICON_SIZE) * hiddenCtr / hiddenCtr),
+					y: BORDER + HIDDEN_ICON_SIZE
+				};
 			}
 			this.add(network.neurons[i]);
 		}

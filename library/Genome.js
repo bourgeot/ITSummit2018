@@ -32,9 +32,9 @@ class Genome {
 		};
 	}
 
-	copy (ID) {
-
+	copy (ID = this.ID) {
 		var c = new Genome(ID, this.GeneticAlgorithm);  // <-- a new chomosome
+		
 		c.fitness = this.fitness;
 		c.adjustedFitness = this.adjustedFitness;
 		c.network = this.network;
@@ -54,7 +54,7 @@ class Genome {
 	}
 	mutate() {
 		this.addNode();
-		this.addConnection(this.GeneticAlgorithm);
+		this.addConnection();
 		this.mutateWeights();
 		this.toggleConnection();
 		
@@ -221,7 +221,7 @@ class Genome {
 			}
 		}
 	}
-	addConnection (GeneticAlgorithm) {
+	addConnection () {
 	//just return dependent on the mutation rate
 		if (Math.random() > this.mutationRates.connections) {
 			return;
@@ -342,6 +342,7 @@ class Genome {
 		//instantiate a neural network based on the node and connection genes.
 		//this.connectionGenes;
 		//this.nodeGenes;
+		this.deletePhenotype();
 		var nodes = [];
 		//create the neurons from the nodes.
 		//this means summing over all the inputs into the nodes X the weights

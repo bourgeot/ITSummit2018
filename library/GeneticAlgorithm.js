@@ -18,7 +18,6 @@ const DISABLE_MUTATION_CHANCE = 0.1;
 const COMPATIBILITY_THRESHOLD = 0.36;
 
 
-const STEP_SIZE  = 0;
 /*
 iNumAddLinkAttempts 5
 dSurvivalRate 0.2
@@ -58,6 +57,7 @@ class GeneticAlgorithm {
 		this.innovationTable = new InnovationTable(this);
 		this.species = [];
 		this.genomes = [];
+		this.generation = 0;
 
 	}
 	newGenomeID() {
@@ -76,7 +76,8 @@ class GeneticAlgorithm {
 		*/
 		var inNodes = [];
 		var outNodes = [];
-		var nType;
+		var nType;		
+		this.generation++;
 		for (let j = 0; j < INPUT_NODES; j++) {
 			const inputNode = new NodeGene(this.nodeID, "input", false, 1.0, {x:j+1, y:0});
 			inNodes.push(inputNode);
@@ -111,7 +112,7 @@ class GeneticAlgorithm {
 			);
 			//this.innovationID++;
 		}
-		var genome = new Genome(this.genomeID, this);
+		var genome = new Genome(this.newGenomeID(), this);
 		genome.nodeGenes = inNodes.concat(outNodes);
 		genome.maxNeuron = genome.nodeGenes.length + 1;
 		genome.mutationRates = {
@@ -150,49 +151,45 @@ class GeneticAlgorithm {
 		this.genomes.push(genome);
 		//create the first species.
 		this.species.push(new Species(this.newSpeciesID()));
-		this.species[0].addMemberZero(genome);
+		this.species[0].addMember(genome);
 		//this.species[0].genomes.push(genome);
 		//Now from this master create copies with random connection weights.
 		for (let i=1; i<POPULATION_SIZE; i++) {
-			this.newGenomeID();
-			const g2 = genome.copy(this.genomeID);
+			const g2 = genome.copy(this.newGenomeID(),this);
 			for (let j = 0; j < g2.connectionGenes.length; j++){
 				g2.connectionGenes[j].connectionWeight = math.randf(-1,1);
 			}
-			//test
-			//g2.addNode();
-			//g2.addConnection();
-			//g2.deletePhenotype();
+
 			g2.createPhenotype();
 			this.genomes.push(g2);
-			//this.species[0].genomes.push(g2);
+
 		}
-		//this.genomes[0].fitness = 1;
-		//this.crossover(this.genomes[0], this.genomes[POPULATION_SIZE - 1]);
-		
-		//console.log(s.compatibilityScore(this.genomes[0],this.genomes[19]));
-			
-		
-		return this;
+
+		return true;
 	}
 	epoch(population) {
 		//this is where fitness is evaluated, evolution happens, and a new generation is spawned.
 		//console.log(population);
+
 		for (let i=0; i < population.length; i++) {
 			population[i].genome.fitness = population[i].fitness;
+			population[i].genome.deletePhenotype();
 		}
+		//alert();
 		//console.log(this.genomes.map(a=>a.fitness));
 		//console.log(population.map(a=>a.fitness));
 		//sort the genomes based on their fitness score
 		//this.genomes.sort((a,b) => b.fitness > a.fitness);
 		//console.log(this.genomes);
 		//speciate
-		let newPool = [];
+		let newPool = [];	
+		//remove extinct species
+		this.species = this.species.filter(e => e.extinct == false);
 		for(let i=0;i<this.genomes.length; i++) {
 			//sort into species.
 			let createNewSpecies = false;
 			for(let j=0; j < this.species.length; j++) {
-				if (this.species[j].memberZero.ID == this.genomes[i]) {
+				if (this.species[j].topMember.ID == this.genomes[i]) {
 					break;
 				}
 				const cScore = this.species[j].compatibilityScore(this.genomes[i]);
@@ -205,7 +202,7 @@ class GeneticAlgorithm {
 					//console.log('no: added member');
 					//this.species[j].genomes.push(this.genomes[i]);
 					createNewSpecies = false;
-					this.species[j].genomes.push(this.genomes[i]);
+					this.species[j].addMember(this.genomes[i]);
 					break;
 				}
 			}
@@ -213,35 +210,37 @@ class GeneticAlgorithm {
 				//console.log('created');
 				const newSpecies = new Species(this.newSpeciesID());
 				this.species.push(newSpecies);
-				newSpecies.addMemberZero(this.genomes[i]);
+				newSpecies.addMember(this.genomes[i]);
 			}
 			
 		}
 		//now they are sorted into species. for each species, manage the fitness and other details
+		//console.log(this.species);
 		//alert();
 		for(let i=0;i<this.species.length; i++) {
-			this.species[i].manageFitnessAndSpawnLevels();
+
 			this.species[i].happyBirthday();
+			this.species[i].manageFitnessAndSpawnLevels();
 			//console.log(this.species[i]);
 			newPool = newPool.concat(this.species[i].spawnOffspring());
 		}
 		//console.log(this.species);
-		//console.log(newPool);
-		alert();
-		/*
-		for(let i=0;i<this.species.length; i++) {
-			for(let j=0; j<this.species[i].genomes.length; j++) {
-				if(this.species[i].compatibilityScore(this.species[i].genomes[j]) > COMPATIBILITY_THRESHOLD) {
-					//make a new species
-					const outlier = this.species[i].genomes.splice(j,1);
-					const newSpecies = this.species.push(new Species(this.newSpeciesID()));
-					newSpecies.memberZero = outlier;
-					newSpecies.genomes.push(outlier);
-				}
-			}
+
+		//update the generation
+		this.generation++;
+//		this.genomes = [];
+		this.genomes = newPool;
+		console.log(newPool);
+
+		//flush and rebuild
+		for(let i=0; i < this.genomes.length; i++) {
+			this.genomes[i].createPhenotype();
+			this.genomes[i].fitness = 0;
+			this.genomes[i].adjustedFitness = 0;
 		}
-		*/
-		
+		console.log(this);
+		//alert();
+		return this.generation;
 	}
 	crossover (mother, father) {
 		//let mom = mother;
@@ -329,7 +328,7 @@ class GeneticAlgorithm {
 			else if (kidGenes.filter(obj => obj.ID == selected.ID).length == 0 ) {
 				kidGenes.push(selected);
 			}
-			//add the neuron Genes
+			//add the neuron Genes -- there is a bug here.
 			if (kidNeurons.filter(obj => obj.ID == selected.inNode.ID).length == 0) {
 				kidNeurons.push(selected.inNode.copy());
 			}

@@ -8,8 +8,8 @@ import entity from "../library/utils/entity.js";
 import NetworkMap from "../library/NetworkMap.js";
 
 
-class EvolutionScreen extends Container {
-	constructor(game, ga, population, onCompletion) {
+class InitializeScreen extends Container {
+	constructor(game, ga, onCompletion) {
 		super();
 		//initialization
 		this.contestants = contestants;
@@ -20,19 +20,22 @@ class EvolutionScreen extends Container {
 
 		//this.controls = contestants[0];
 		this.onCompletion = onCompletion;
-		ga.epoch(population);
+		this.ready = ga.initialize();
 		
 	}
 	update(dt, t) {
 		super.update(dt, t);
 		//wait for the evolution to finish before restarting the simulation
-		this.life -= dt;
-		if (this.life < 0) {
-			console.log(ga);
+		//this.life -= dt;
+		if (this.ready) {
 			this.onCompletion();
 		}
+		//if (this.life < 0) {
+		//	console.log(ga);
+		//	this.onCompletion();
+		//}
 
 	}
 }
 
-export default EvolutionScreen;
+export default InitializeScreen;

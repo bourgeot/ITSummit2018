@@ -157,7 +157,7 @@ class GameScreen extends Container {
 			}
 		}
 
-		this.racers.sort((a, b) => b.controller.fitness > a.controller.fitness);
+		this.racers.sort((a, b) => ((b.controller.fitness > a.controller.fitness) && b.alive));
 		this.leadRacer = this.racers[0];
 		this.leadRacer.setCondition(CONDITION_LEADER);
 		this.camera.setSubject(this.leadRacer);

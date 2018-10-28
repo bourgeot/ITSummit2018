@@ -10,7 +10,7 @@ const CROSSOVER_CHANCE = 0.75;
 class Species {
 	constructor(ID) {
 		this.ID = ID;
-		this.memberZero = {};
+		this.topMember = {};
 		this.topFitness = 0;
 		this.lastAvgAdjFitness = 0;
 		this.genomes = [];
@@ -21,11 +21,13 @@ class Species {
 		this.extinct = false;
 		
 	}
-	addMemberZero(genome) {
-		this.memberZero = genome;
+	addMember(genome) {
+		if (this.genomes.length == 0 || genome.fitness > this.topMember.fitness) {
+			this.topMember = genome.copy();
+			this.topFitness = genome.fitness;
+			this.lastAvgAdjFitness = genome.fitness;
+		}
 		this.genomes.push(genome);
-		this.topFitness = genome.fitness;
-		this.lastAvgAdjFitness = genome.fitness;
 	}
 	cull() {
 		if (this.genomes.length > 1) {
@@ -47,23 +49,23 @@ class Species {
 		this.age++;
 	}
 	manageFitnessAndSpawnLevels() {
-		this.topFitness = this.memberZero.fitness;
+		this.spawnQuantity = 0;
+		//this.topFitness = this.memberZero.fitness;
 		let total = 0;
+
+		alert();
 		for(let i=0; i<this.genomes.length; i++) {
 			//fitness adjustment
 			this.genomes[i].adjustedFitness = this.genomes[i].fitness / this.genomes.length;
-			if (this.genomes[i].fitness > this.topFitness) {
-				this.topFitness = this.genomes[i].fitness;
-				this.memberZero = this.genomes[i];
-			}
-			//this.memberZero.connectionGenes.sort((a,b) => b.fitness > a.fitness);
 			total += this.genomes[i].adjustedFitness;
 			this.averageAdjFitness = total/this.genomes.length;
 		}
 		for(let i=0; i<this.genomes.length; i++) {
 			this.spawnQuantity += this.genomes[i].adjustedFitness/this.averageAdjFitness;
 		}
+		console.log(this);
 		this.spawnQuantity = Math.floor(this.spawnQuantity);
+		console.log(this.spawnQuantity);
 
 	}
 	spawnOffspring() {
@@ -72,7 +74,7 @@ class Species {
 		let population = [];
 		this.cull(); //cull sorts the genomes so the fittest is at the top
 		var spawn;
-		const ancestor = this.genomes[0];
+		const ancestor = this.topMember;
 		//console.log (ancestor);
 		const ga = ancestor.GeneticAlgorithm;
 		population.push(ancestor.copy(ga.newGenomeID(), ga));
@@ -89,7 +91,7 @@ class Species {
 			//try and perform crossover
 			for (let i=1; i< this.spawnQuantity; i++) {
 				//clone someone
-				spawn = math.randOneFrom(this.genomes).copy(ga.newGenomeID, ga);
+				spawn = math.randOneFrom(this.genomes).copy(ga.newGenomeID(), ga);
 				if(Math.random() <= CROSSOVER_CHANCE) {
 					for (let j = 0; j < 5; j++) {
 						const m = math.randOneFrom(this.genomes);
@@ -111,7 +113,7 @@ class Species {
 		//this measures the genetic distance between two genomes, and is used to determine
 		//whether or not they are part of the same species.
 		let g1IDs = genome1.connectionGenes.map(obj=> obj.ID).sort();
-		let g2IDs = this.memberZero.connectionGenes.map(obj=> obj.ID).sort();
+		let g2IDs = this.topMember.connectionGenes.map(obj=> obj.ID).sort();
 		//console.log(g1IDs);
 		//console.log(g2IDs);
 		let weightDifference = 0;
@@ -127,7 +129,7 @@ class Species {
 				if (g1IDs[i] == g2IDs[j]) {
 					matched++;
 					noMatch = false;
-					weightDifference += Math.abs(genome1.connectionGenes[i].connectionWeight - this.memberZero.connectionGenes[j].connectionWeight);
+					weightDifference += Math.abs(genome1.connectionGenes[i].connectionWeight - this.topMember.connectionGenes[j].connectionWeight);
 					//weightDifference += Math.abs(g1IDs[i].connectionWeight - g2IDs[j].connectionWeight);
 					//splice the array to remove the matched element
 					g2IDs.splice(j, 1);

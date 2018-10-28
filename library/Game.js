@@ -1,16 +1,16 @@
 
 import Container from "./Container.js";
 import CanvasRenderer from "./renderer/CanvasRenderer.js";
-
 const STEP = 1 / 60;
-const MAX_FRAME = STEP * 5;
+const MULTIPLIER = 1;
+const SPEED = STEP * MULTIPLIER;
+const MAX_FRAME = SPEED * 5;
+
 
 class Game {
 	constructor (width, height, parent = 'body') {
 		this.w = width;
 		this.h = height;
-		//a future version should create the internal divs so that index.html doesn't have to define them
-		//document.createElement();  <-- I don't know what arguments this requires
 		this.renderer = new CanvasRenderer(width, height);
 		document.querySelector('#gameBoard').appendChild(this.renderer.view);
 		this.hud = new CanvasRenderer(200,300);  // the hud will have quantitative information about the racers
@@ -26,23 +26,27 @@ class Game {
 
 	}
 	//Methods
-	run (gameOver) {
-		let deltaT = 0;
-		let lastT = 0;
+
+	run(gameUpdate = () => {}) {
+		let dt = 0;
+		let last = 0;
 		const gameLoop = ms => {
 			requestAnimationFrame(gameLoop);
-			const t = ms / 1000;
-			deltaT = Math.min(t - lastT, MAX_FRAME);
-			lastT = t;
-
-			this.scene.update(deltaT, t);
-			//gameUpdate(deltaT, t);
+			const t = ms / 1000; // Let's work in seconds
+			dt += Math.min(t - last, MAX_FRAME);
+			last = t;
+			while (dt >= SPEED) {
+				this.scene.update(STEP, t / MULTIPLIER);
+				gameUpdate(STEP, t / MULTIPLIER);
+				dt -= SPEED;
+			}
 			this.renderer.render(this.scene);
 			this.hud.render(this.scoreboard);
 			this.leaderBoard.render(this.frontrunner);
 		};
 		requestAnimationFrame(gameLoop);
 	}
+
 }
 	
 	
