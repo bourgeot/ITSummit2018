@@ -42,6 +42,8 @@ class Racer extends Container {
 		this.speed = 0;
 		this.theta = 0;
 		this.heading = 0;
+		this.lastPath = 0;
+		this.fitness = 0;
 		//this.controls = new KeyControls();
 		this.controller = controller;
 		this.avatar = {}; //<--this will hold the layout of the network
@@ -116,9 +118,9 @@ class Racer extends Container {
 		//array of the controller.
 		//x = vt
 		if (this.alive) {
-			this.speed = this.controller.outputActions[SPEED_NEURON] * MAX_SPEED + math.rand(50);
+			this.speed = this.controller.outputActions[SPEED_NEURON] * MAX_SPEED;
 			this.heading += this.controller.outputActions[HEADING_NEURON] * MAX_ROTATION - Math.PI/4;
-			this.heading = this.heading + math.randf(-.001, .001) % Math.PI * 2;
+			//this.heading = this.heading + math.randf(-.001, .001) % Math.PI * 2;
 			this.auto.rotation = this.heading + spriteRotation;
 			if (this.speed * dt > .00001) {
 				const deltaP = {
@@ -127,7 +129,7 @@ class Racer extends Container {
 				};
 				this.position.x += deltaP.x;
 				this.position.y += deltaP.y;
-				this.controller.fitness += deltaP.x * deltaP.x + deltaP.y * deltaP.y;
+				//this.controller.fitness += deltaP.x * deltaP.x + deltaP.y * deltaP.y;
 			}
 			//now update the sensor values of the controller's input array
 			for (let i=0; i < this.whiskers.children.length; i++) {
@@ -136,7 +138,7 @@ class Racer extends Container {
 		this.age += dt;
 		}
 		else {
-			this.fitness -= Math.floor(this.age/100);
+			this.controller.fitness -= Math.floor(this.age/100);
 		}
 		
 	}

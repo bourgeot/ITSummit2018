@@ -64,49 +64,54 @@ class Level extends TileMap {
 		];
 		const fnMap = [
 			34,34,34,34,34,34,34,34,34,34,
-			34, 5, 1, 1, 1, 1, 1, 1,6,34,
-			34, 4, 14, 2, 2, 2, 2, 14, 3,34,
-			34,4,3,34,34,34,34, 4, 3,34,
-			34,4,3,34,34,34,34, 4, 3,34,
-			34,4,3,34,34,34,34, 4, 3,34,
-			34,4,3,34,34,34,34, 4, 3,34,
-			34,4,14,1,1,1,1, 14,3,34,
-			34,8,2 ,2 , 2, 2, 2,2,7,34,
+			34, 5, 1, 1, 1, 1, 1, 1, 6,34,
+			34, 8, 2, 2, 2, 2, 2,14, 3,34,
+			34,34,34,34,34,34,34, 4, 3,34,
+			34, 5, 6,34,34,34,34, 4, 3,34,
+			34, 4, 3,34,34,34,34, 4, 3,34,
+			34, 4, 3,34,34,34,34, 4, 3,34,
+			34, 4,14, 1, 1, 1, 1,14, 3,34,
+			34, 8, 2, 2, 2, 2, 2, 2, 7,34,
 			34,34,34,34,34,34,34,34,34,34
-		];		
-		/*const fnMap = [
-			34,34,34,34,34,34,34,34,34,34,
-			34, 5, 1, 1, 1, 1, 1,15,16,34,
-			34, 8,14,14,14,14,14,14,17,34,
-			34,34,34,34,34,34,34,34, 3,34,
-			34,34,34,34,34,34,34,34, 3,34,
-			34,34,34,34,34,34,34,34, 3,34,
-			34,34,34,34,34,34,34,34, 3,34,
-			34,34,34,34,34,34,34,34,18,34,
-			34,34,2 ,2 , 2, 2, 2,20,19,34,
-			34,34,34,34,34,34,34,34,34,34
-		];*/			
-		const level = [];
+		];	
+			
+		const tiles = [];
 		var counter = 0;
 		for (let i = 0; i < mapH; i++) {
 		  for (let j = 0; j < mapW; j++) {
-
 			const found = tileIndex.find(function(e) {
 				return e.fn == fnMap[counter];
 			});
-			//console.log(found);
+
 			/*level.push({
 			  x: found.x,
 			  y: found.y
 			});*/
-			level.push(found);
+			//add the path metadata
+			//found.path = pathMap[counter];
+			tiles.push(found);
+			//console.log(found);
+			//alert();
 			counter ++;	
 		  }
 	
 		}
-		//console.log(level);
-		//console.log(level.map(i => tileIndex[i]));
-		super(level, mapW, mapH, tileW, tileH, texture);
+		//console.log(counter);
+		//console.log(tiles);
+		//alert();
+		super(tiles, mapW, mapH, tileW, tileH, texture);
+		this.pathMap = [
+			 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+			 0, 1, 2, 3, 4, 5, 6, 7, 7, 0, 
+			 0, 1, 2, 3, 4, 5, 6, 8, 8, 0, 
+			 0, 0, 0, 0, 0, 0, 0, 9, 9, 0, 
+			 0,23,23, 0, 0, 0, 0,10,10, 0, 
+			 0,22,22, 0, 0, 0, 0,11,11, 0, 
+			 0,21,21, 0, 0, 0, 0,12,12, 0, 
+			 0,20,20,18,17,16,15,14,13, 0, 
+			 0,19,19,18,17,16,15,14,13, 0, 
+			 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+		];
 		this.bounds = {
 			left: tileW,
 			right: w - tileW * 2,
@@ -114,6 +119,14 @@ class Level extends TileMap {
 			bottom: h - tileH * 2
 			};
 	}
+	pathAtPixelPos(pos) {
+		//look up the frame of the tile, and cross reference to the
+		//path map.
+		let z = super.pixelToMapPos(pos);
+		let index = z.y * this.mapW + z.x;
+		return this.pathMap[index];
+		//return super.tileAtPixelPos(pos).path;
+	}	
 }
 
 export default Level;

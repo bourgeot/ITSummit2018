@@ -89,7 +89,8 @@ class GameScreen extends Container {
 			let racer = this.racers[i];  // convenience variable
 			const racerPos = racer.position;
 			if (racer.alive) {
-
+				//update its fitness
+				racer.controller.fitness = this.map.pathAtPixelPos(racerPos) * 128;
 				for(let i=0; i< racer.whiskers.children.length; i++) {
 					let aWhisker = racer.whiskers.children[i];
 					let whiskerPos = {x: Math.round(racerPos.x + racer.whiskerLocation(i).x),
