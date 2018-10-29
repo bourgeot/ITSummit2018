@@ -12,13 +12,11 @@ class InitializeScreen extends Container {
 	constructor(game, ga, onCompletion) {
 		super();
 		//initialization
-		this.contestants = contestants;
 		//console.log(contestants);
 		this.w = game.w;
 		this.h = game.h;
 		this.life = 3;
 
-		//this.controls = contestants[0];
 		this.onCompletion = onCompletion;
 		this.ready = ga.initialize();
 		
