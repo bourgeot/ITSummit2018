@@ -53,7 +53,7 @@ class Species {
 		//this.topFitness = this.memberZero.fitness;
 		let total = 0;
 
-		alert();
+//		alert();
 		for(let i=0; i<this.genomes.length; i++) {
 			//fitness adjustment
 			this.genomes[i].adjustedFitness = this.genomes[i].fitness / this.genomes.length;
@@ -63,9 +63,9 @@ class Species {
 		for(let i=0; i<this.genomes.length; i++) {
 			this.spawnQuantity += this.genomes[i].adjustedFitness/this.averageAdjFitness;
 		}
-		console.log(this);
+		//console.log(this);
 		this.spawnQuantity = Math.floor(this.spawnQuantity);
-		console.log(this.spawnQuantity);
+//		console.log(this.spawnQuantity);
 
 	}
 	spawnOffspring() {

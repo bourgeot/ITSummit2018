@@ -21,6 +21,7 @@
 
 import GameScreen from "../screens/GameScreen.js";
 import EvolutionScreen from "../screens/EvolutionScreen.js";
+import InitializeScreen from "../screens/InitializeScreen.js";
 import library from "../library/index.js";
 //import Racer from "./entities/Racer.js";
 import KeyControls from "../library/controls/KeyControls.js";
@@ -63,11 +64,11 @@ function startGame() {
 		contestants.push(ga.genomes[i].network);
 	}
   //game.scene = new GameScreen(game, controls, contestants, newEpoch);
-  game.scene = new GameScreen(game, contestants, evolveNetworks);
+  game.scene = new GameScreen(game, ga, contestants, evolveNetworks);
 }
 
 function initializeScreen() {
-	game.scene = new InitializeScreen(game, ga, onCompletion);
+	game.scene = new InitializeScreen(game, ga, startGame);
 }
 function evolveNetworks(population) {
 	game.scene = new EvolutionScreen(game, ga, population, startGame);

@@ -18,9 +18,10 @@ const MAXIMUM_LIFETIME = 10000;
 
 //level player racer
 class GameScreen extends Container {
-	constructor(game, contestants, onGameOver) {
+	constructor(game, ga, contestants, onGameOver) {
 		super();
 		//initialization
+		this.generation = ga.generation;
 		this.contestants = contestants;
 		//console.log(contestants);
 		this.w = game.w;
@@ -161,7 +162,8 @@ class GameScreen extends Container {
 		this.leadRacer = this.racers[0];
 		this.leadRacer.setCondition(CONDITION_LEADER);
 		this.camera.setSubject(this.leadRacer);
-		this.location.text += "Fitness: " + this.leadRacer.controller.fitness;
+		this.location.text += "\nGeneration: " + this.generation;
+		this.location.text += "\nFitness: " + this.leadRacer.controller.fitness;
 		this.location.text += "\nSensors: " + this.leadRacer.controller.inputSensors.toString();
 		this.location.text += "\nHeading: " +  this.leadRacer.controller.outputActions[0].toString();
 		this.location.text += "\nSpeed: " +  this.leadRacer.controller.outputActions[1].toString();
