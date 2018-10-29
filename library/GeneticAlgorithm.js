@@ -170,7 +170,7 @@ class GeneticAlgorithm {
 	epoch(population) {
 		//this is where fitness is evaluated, evolution happens, and a new generation is spawned.
 		//console.log(population);
-		let ready = false;
+
 		for (let i=0; i < population.length; i++) {
 			population[i].genome.fitness = population[i].fitness;
 			population[i].genome.deletePhenotype();
@@ -230,7 +230,7 @@ class GeneticAlgorithm {
 		this.generation++;
 //		this.genomes = [];
 		this.genomes = newPool;
-//		console.log(newPool);
+		console.log(newPool);
 
 		//flush and rebuild
 		for(let i=0; i < this.genomes.length; i++) {
@@ -238,9 +238,9 @@ class GeneticAlgorithm {
 			this.genomes[i].fitness = 0;
 			this.genomes[i].adjustedFitness = 0;
 		}
-//		console.log(this);
-		ready = true;
-		return ready;
+		console.log(this);
+		//alert();
+		return this.generation;
 	}
 	crossover (mother, father) {
 		//let mom = mother;
