@@ -25,6 +25,7 @@ class InitializeScreen extends Container {
 		super.update(dt, t);
 		//wait for the evolution to finish before restarting the simulation
 		//this.life -= dt;
+		
 		if (this.ready) {
 			this.onCompletion();
 		}

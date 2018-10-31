@@ -14,7 +14,7 @@ const CONDITION_LEADER = 3;
 const FATAL_DISTANCE = 25;
 const MAX_WHISKER_LENGTH = 100;
 const START_POSITION = {x: 303, y: 280};
-const MAXIMUM_LIFETIME = 10000;
+const MAXIMUM_LIFETIME = 6000;
 
 //level player racer
 class GameScreen extends Container {

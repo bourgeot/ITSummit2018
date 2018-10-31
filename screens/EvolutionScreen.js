@@ -13,12 +13,12 @@ class EvolutionScreen extends Container {
 		//this.controls = contestants[0];
 		this.onCompletion = onCompletion;
 		this.evolved = ga.epoch(population);
-		
+		this.scene
 	}
 	update(dt, t) {
 		super.update(dt, t);
 		//wait for the evolution to finish before restarting the simulation
-
+		console.log(this.evolved);
 		if (this.evolved) {
 			this.onCompletion();
 		}
