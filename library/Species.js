@@ -26,6 +26,7 @@ class Species {
 			this.topMember = genome.copy();
 			this.topFitness = genome.fitness;
 			this.lastAvgAdjFitness = genome.fitness;
+			this.averageAdjFitness = genome.fitness;
 		}
 		this.genomes.push(genome);
 	}
@@ -104,7 +105,6 @@ class Species {
 				}
 				spawn.mutate();
 				population.push(spawn);
-
 			}
 		}
 		return population;	

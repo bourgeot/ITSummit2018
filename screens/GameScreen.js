@@ -14,7 +14,7 @@ const CONDITION_LEADER = 3;
 const FATAL_DISTANCE = 25;
 const MAX_WHISKER_LENGTH = 100;
 const START_POSITION = {x: 303, y: 280};
-const MAXIMUM_LIFETIME = 6000;
+const MAXIMUM_LIFETIME = 5000;
 
 //level player racer
 class GameScreen extends Container {
@@ -26,8 +26,9 @@ class GameScreen extends Container {
 		//console.log(contestants);
 		this.w = game.w;
 		this.h = game.h;
+		this.game = game;
 		this.racers = [];
-		this.dead = [];
+		this.simulationOver = false;
 		//this.controls = contestants[0];
 		this.lifetime = MAXIMUM_LIFETIME;
 		this.onGameOver = onGameOver;
@@ -86,89 +87,99 @@ class GameScreen extends Container {
 		this.location.text = "";  // might move this	  
 		//set this up for multiple racers
 		var hit = null, bHit = false, whiskerHits = 0;
-		for (let i = 0; i < this.racers.length; i ++) {
-			let racer = this.racers[i];  // convenience variable
-			const racerPos = racer.position;
-			if (racer.alive) {
-				//update its fitness
-				racer.controller.fitness = this.map.pathAtPixelPos(racerPos) * 128;
-				for(let i=0; i< racer.whiskers.children.length; i++) {
-					let aWhisker = racer.whiskers.children[i];
-					let whiskerPos = {x: Math.round(racerPos.x + racer.whiskerLocation(i).x),
-					  y:Math.round(racerPos.y + racer.whiskerLocation(i).y)};
-					let currentTile = this.map.tileAtPixelPos(whiskerPos);
-					
-					//get the current length;
-					let r = aWhisker.length;
-					let bounds =[];
-					for (let j = 0; j < 2; j++) {
-						if (j > 0) {
-							//I may want to add 'front of car' in addition to the middle of the car
-							const currentTile = this.map.tileAtPixelPos(racerPos);
-						}
-						if (currentTile.frame.bType) {
-							for (let a = 0; a < currentTile.frame.boundary.length - 1; a++ ) {
-								bounds.push(
-									[
-										{x:currentTile.position.x + currentTile.frame.boundary[a][0],
-											y:currentTile.position.y + currentTile.frame.boundary[a][1]},
-										{x:currentTile.position.x + currentTile.frame.boundary[a+1][0],
-											y:currentTile.position.y + currentTile.frame.boundary[a+1][1]}
-									]);
+		if(!this.simulationOver) {
+			for (let i = 0; i < this.racers.length; i ++) {
+				let racer = this.racers[i];  // convenience variable
+				const racerPos = racer.position;
+				if (racer.alive) {
+					//update its fitness
+					racer.controller.fitness = this.map.pathAtPixelPos(racerPos) * 128;
+					for(let i=0; i< racer.whiskers.children.length; i++) {
+						let aWhisker = racer.whiskers.children[i];
+						let whiskerPos = {x: Math.round(racerPos.x + racer.whiskerLocation(i).x),
+						  y:Math.round(racerPos.y + racer.whiskerLocation(i).y)};
+						let currentTile = this.map.tileAtPixelPos(whiskerPos);
+						
+						//get the current length;
+						let r = aWhisker.length;
+						let bounds =[];
+						for (let j = 0; j < 2; j++) {
+							if (j > 0) {
+								//I may want to add 'front of car' in addition to the middle of the car
+								const currentTile = this.map.tileAtPixelPos(racerPos);
 							}
-							for (let b = 0; b < bounds.length; b++) {
-								hit = entity.intersection([racerPos, whiskerPos], bounds[b]);
-								//location.text = hit;
-								if (hit !== null) {
-									//console.log(i);
-									//location.text = "Whisker " + i + "hit.";
-									bHit = true;
-									whiskerHits++;
-									r = Math.sqrt((hit.x - racerPos.x) * (hit.x - racerPos.x) +
-										(hit.y - racerPos.y) * (hit.y - racerPos.y));
-									aWhisker.setLength(r);
-									racer.setCondition(CONDITION_WARNING);
-									if(r <= FATAL_DISTANCE) {
-										racer.setCondition(CONDITION_FATAL);
-										//this.racers.splice(i,1);
-										this.dead.push(racer);
-										break;
+							if (currentTile.frame.bType) {
+								for (let a = 0; a < currentTile.frame.boundary.length - 1; a++ ) {
+									bounds.push(
+										[
+											{x:currentTile.position.x + currentTile.frame.boundary[a][0],
+												y:currentTile.position.y + currentTile.frame.boundary[a][1]},
+											{x:currentTile.position.x + currentTile.frame.boundary[a+1][0],
+												y:currentTile.position.y + currentTile.frame.boundary[a+1][1]}
+										]);
+								}
+								for (let b = 0; b < bounds.length; b++) {
+									hit = entity.intersection([racerPos, whiskerPos], bounds[b]);
+									//location.text = hit;
+									if (hit !== null) {
+										//console.log(i);
+										//location.text = "Whisker " + i + "hit.";
+										bHit = true;
+										whiskerHits++;
+										r = Math.sqrt((hit.x - racerPos.x) * (hit.x - racerPos.x) +
+											(hit.y - racerPos.y) * (hit.y - racerPos.y));
+										aWhisker.setLength(r);
+										racer.setCondition(CONDITION_WARNING);
+										if(r <= FATAL_DISTANCE) {
+											racer.setCondition(CONDITION_FATAL);
+											//this.racers.splice(i,1);
+											//this.dead.push(racer);
+											break;
+										}
 									}
 								}
-							}
-							if(!bHit) {
-								//return to previous value
-								//console.log(r);
-								aWhisker.setLength();
-								
+								if(!bHit) {
+									//return to previous value
+									//console.log(r);
+									aWhisker.setLength();
+									
+								}
 							}
 						}
+						bHit = false;
+						if (racer.alive == false) break;
 					}
-					bHit = false;
-					if (racer.alive == false) break;
+					if(whiskerHits <= 0) {
+							racer.setCondition(CONDITION_CLEAR);
+					}
 				}
-				if(whiskerHits <= 0) {
-						racer.setCondition(CONDITION_CLEAR);
-				}
-			}
-			else {
-				if(this.racers.filter(e => e.alive == true).length < 1) {
-					this.onGameOver(this.racers.map(a => a.controller));
+				else {
+					
 				}
 			}
-		}
+			this.racers.sort((a, b) => ((b.controller.fitness > a.controller.fitness) && b.alive));
+			this.leadRacer = this.racers[0];
+			this.leadRacer.setCondition(CONDITION_LEADER);
+			this.camera.setSubject(this.leadRacer);
+			this.location.text += "\nGeneration: " + this.generation;
+			this.location.text += "\nFitness: " + this.leadRacer.controller.fitness;
+			this.location.text += "\nSensors: " + this.leadRacer.controller.inputSensors.toString();
+			this.location.text += "\nHeading: " +  this.leadRacer.controller.outputActions[0].toString();
+			this.location.text += "\nSpeed: " +  this.leadRacer.controller.outputActions[1].toString();
+			this.lifetime -= dt * 1000;
 
-		this.racers.sort((a, b) => ((b.controller.fitness > a.controller.fitness) && b.alive));
-		this.leadRacer = this.racers[0];
-		this.leadRacer.setCondition(CONDITION_LEADER);
-		this.camera.setSubject(this.leadRacer);
-		this.location.text += "\nGeneration: " + this.generation;
-		this.location.text += "\nFitness: " + this.leadRacer.controller.fitness;
-		this.location.text += "\nSensors: " + this.leadRacer.controller.inputSensors.toString();
-		this.location.text += "\nHeading: " +  this.leadRacer.controller.outputActions[0].toString();
-		this.location.text += "\nSpeed: " +  this.leadRacer.controller.outputActions[1].toString();
-		this.lifetime -= dt * 1000;
- 
+		}
+		if(this.racers.filter(e => e.alive == true).length < 1) {
+				//console.log("all dead");
+				this.simulationOver = true;
+				//console.log("simulation is over");
+				this.location.text = "";
+				let pop = [];
+				for(let j=0; j<this.racers.length; j++){
+					pop.push(this.racers[j].controller); 
+				}
+				this.onGameOver(pop);
+		}
 	}
 }
 
