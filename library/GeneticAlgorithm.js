@@ -341,8 +341,6 @@ class GeneticAlgorithm {
 			}
 			//add the neuron Genes -- there is a bug here.
 			if (kidNeurons.filter(obj => obj.ID == selected.inNode.ID).length == 0) {
-				
-				console.log(kidNeurons);
 				console.log(selected);
 				kidNeurons.push(selected.inNode.copy());
 			}
