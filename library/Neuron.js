@@ -42,11 +42,11 @@ class Neuron extends Container {
 		}
 		this.add(this.icon);
 	}
-	calculateOutput(sensorInput = 0) {
+	calculateOutput() {
 		//calculate the output given the inputs
 		var activation = 0.0;
 		if (this.type == "input") {
-			activation = sensorInput * this.bias;
+			activation = this.output * this.bias;
 		}
 		else {
 			for (let j = 0; j < this.inputNeurons.length; j++) {

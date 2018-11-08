@@ -36,6 +36,12 @@ class NeuralNetwork extends Container {
 			}
 		}
 		*/
+		//transfer the inputs
+		for(let k=0; k < this.neurons.length; k++) {
+			if(this.neurons[k].type == "input") {
+				this.neurons[k].output = this.inputSensors[this.neurons[k].ID-1];
+			}
+		}
 		for (let j=0; j < this.neurons.length; j++) {
 			this.neurons[j].calculateOutput();
 			if (this.neurons[j].type == "speed") {

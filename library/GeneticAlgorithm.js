@@ -10,12 +10,12 @@ const WEIGHT_REPLACEMENT_CHANCE = 0.1;
 const CROSSOVER_CHANCE = 0.75;
 const MUTATE_CONNECTIONS_CHANCE = 0.3;
 const LINK_MUTATION_CHANCE = 0.17;
-const BIAS_MUTATION_CHANCE = 0;
-const NODE_MUTATION_CHANCE = 0.514;
+const BIAS_MUTATION_CHANCE = 0.1;
+const NODE_MUTATION_CHANCE = 0.14;
 const ENABLE_MUTATION_CHANCE = 0.1;
 const DISABLE_MUTATION_CHANCE = 0.1;
 
-const COMPATIBILITY_THRESHOLD = 0.36;
+const COMPATIBILITY_THRESHOLD = 0.50;
 
 
 /*
@@ -58,6 +58,7 @@ class GeneticAlgorithm {
 		this.species = [];
 		this.genomes = [];
 		this.generation = 0;
+		
 
 	}
 	newGenomeID() {
@@ -167,6 +168,7 @@ class GeneticAlgorithm {
 
 		return true;
 	}
+
 	epoch(population) {
 		//this is where fitness is evaluated, evolution happens, and a new generation is spawned.
 		//console.log(population);
@@ -217,11 +219,14 @@ class GeneticAlgorithm {
 		//now they are sorted into species. for each species, manage the fitness and other details
 		//console.log(this.species);
 		//alert();
+
 		for(let i=0;i<this.species.length; i++) {
 
 			this.species[i].happyBirthday();
 			this.species[i].manageFitnessAndSpawnLevels();
 			//console.log(this.species[i]);
+		//		console.log(this.species);
+		//alert();	
 			newPool = newPool.concat(this.species[i].spawnOffspring());
 		}
 		//console.log(this.species);
@@ -229,18 +234,25 @@ class GeneticAlgorithm {
 		//update the generation
 		this.generation++;
 //		this.genomes = [];
-		this.genomes = newPool;
-//		console.log(newPool);
+		newPool.sort((a,b) => b.adjustedFitness>a.adjustedFitness);
+		for(let j = 0; j < newPool.length; j++) {
+			newPool[j].globalRank = j;
+		}
+		
 
+		this.genomes = newPool.slice(0,20);
+
+		//alert();
 		//flush and rebuild
 		for(let i=0; i < this.genomes.length; i++) {
 			this.genomes[i].createPhenotype();
 			this.genomes[i].fitness = 0;
 			this.genomes[i].adjustedFitness = 0;
 		}
-//		console.log(this);
-		ready = true;
-		return ready;
+		//console.log(this);
+		//ready = true;
+		console.log(this.genomes);
+		return this;
 	}
 	crossover (mother, father) {
 		//let mom = mother;
@@ -248,7 +260,6 @@ class GeneticAlgorithm {
 		let kidGenes = [];
 		let kidNeurons = [];
 		var kidGenome, fittest;
-		console.log
 		//sort by IDs 
 		let momGenes = mother.connectionGenes.sort((a, b) => a.ID < b.ID);
 		let dadGenes = father.connectionGenes.sort((a, b) => a.ID < b.ID);
@@ -277,8 +288,8 @@ class GeneticAlgorithm {
 		//the crossover will choose matching genes at random. Disjoint genes will be inherited from the fittest parent.
 		let mIdx = 0;
 		let dIdx = 0;
-		let mLen = momGenes.length;
-		let dLen = dadGenes.length;
+		let mLen = momGenes.length - 1;
+		let dLen = dadGenes.length - 1;
 		let selected = {};
 		while (mIdx != mLen && dIdx != dLen)  {
 			//edge: no more mom genes
@@ -330,6 +341,7 @@ class GeneticAlgorithm {
 			}
 			//add the neuron Genes -- there is a bug here.
 			if (kidNeurons.filter(obj => obj.ID == selected.inNode.ID).length == 0) {
+				console.log(selected);
 				kidNeurons.push(selected.inNode.copy());
 			}
 			if (kidNeurons.filter(obj => obj.ID == selected.outNode.ID).length == 0) {

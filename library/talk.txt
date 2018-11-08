@@ -1,0 +1,16 @@
+Title
+	Inspiration
+		(evolving a NN to run a race)
+	Inspiration 2
+		(Mari/o)
+	Neural Networks
+		What are they?
+		How do they work?
+		Knowing the problem domain
+		Supervised and Unsupervised Learning
+		Trial and Error
+	Genetic Algorithms
+	
+	NEAT Stuff
+	
+	

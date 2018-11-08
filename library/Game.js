@@ -2,7 +2,7 @@
 import Container from "./Container.js";
 import CanvasRenderer from "./renderer/CanvasRenderer.js";
 const STEP = 1 / 60;
-const MULTIPLIER = 1;
+const MULTIPLIER = 2;
 const SPEED = STEP * MULTIPLIER;
 const MAX_FRAME = SPEED * 5;
 
@@ -23,15 +23,16 @@ class Game {
 		this.scoreboard = new Container();
 		this.frontrunner = new Container();
 		this.frontrunner.size = {width: 200, height: 200};
-
+		this.cid = 0;
 	}
 	//Methods
 
 	run(gameUpdate = () => {}) {
+		
 		let dt = 0;
 		let last = 0;
 		const gameLoop = ms => {
-			requestAnimationFrame(gameLoop);
+			this.cid = requestAnimationFrame(gameLoop);
 			const t = ms / 1000; // Let's work in seconds
 			dt += Math.min(t - last, MAX_FRAME);
 			last = t;
@@ -44,7 +45,7 @@ class Game {
 			this.hud.render(this.scoreboard);
 			this.leaderBoard.render(this.frontrunner);
 		};
-		requestAnimationFrame(gameLoop);
+		this.cid = requestAnimationFrame(gameLoop);
 	}
 
 }

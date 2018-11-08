@@ -27,6 +27,7 @@ import library from "../library/index.js";
 import KeyControls from "../library/controls/KeyControls.js";
 import Game from "../library/Game.js";
 import GeneticAlgorithm from "../library/GeneticAlgorithm.js";
+import Container from "../library/Container.js";
 
 
 
@@ -39,10 +40,11 @@ const FATAL_DISTANCE = 25;
 */
 const game = new Game(640, 480, '#gameBoard' );
 const ga = new GeneticAlgorithm();
-
+var tick = 1;
 //const controls = new KeyControls();
 game.scene = new InitializeScreen(game, ga, startGame);
 game.run();
+
 //const ready = newGA();
 
 
@@ -71,9 +73,20 @@ function initializeScreen() {
 	game.scene = new InitializeScreen(game, ga, startGame);
 }
 function evolveNetworks(population) {
-	game.scene = new EvolutionScreen(game, ga, population, startGame);
+	//createAudioFileAsync(audioSettings).then(successCallback, failureCallback)
+		//console.log(population);
+		window.cancelAnimationFrame(game.cid);
+		ga.epoch(population);
+		game.scene = new Container();
+		game.renderer.render(game.scene);
+		game.hud.render(game.scene);
+		game.leaderBoard.render(game.scene);
+		game.run();
+		startGame();
 }
-
+function reportError() {
+	console.log("there was an error");
+}
 
 
 
